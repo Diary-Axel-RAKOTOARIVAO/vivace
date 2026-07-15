@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CodeBlock from '$lib/components/CodeBlock.svelte';
 	const app = `<!-- App.vue -->
 <script setup>
 import { onMounted, onUnmounted } from 'vue'
@@ -48,17 +49,17 @@ const box = useTemplateRef('box')
 
 <p>Initialize once in your root component's mount lifecycle:</p>
 
-<pre><code>{app}</code></pre>
+<CodeBlock lang="vue" code={app} />
 
 <p>Annotate templates directly — plain attributes, no directive needed:</p>
 
-<pre><code>{markup}</code></pre>
+<CodeBlock lang="vue" code={markup} />
 
 <h2>Nuxt</h2>
 
 <p>Register it as a client-only plugin so it never touches the server render:</p>
 
-<pre><code>{nuxt}</code></pre>
+<CodeBlock lang="typescript" code={nuxt} />
 
 <h2>v-if, v-for and route changes</h2>
 
@@ -70,4 +71,4 @@ const box = useTemplateRef('box')
 
 <h2>Programmatic control</h2>
 
-<pre><code>{programmatic}</code></pre>
+<CodeBlock lang="vue" code={programmatic} />

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CodeBlock from '$lib/components/CodeBlock.svelte';
 	const cdn = `<!doctype html>
 <html>
   <head>
@@ -38,13 +39,13 @@ Vivace.init()`;
 	<code>init()</code>. Module scripts are deferred, so the DOM is ready when it runs.
 </p>
 
-<pre><code>{cdn}</code></pre>
+<CodeBlock lang="html" code={cdn} />
 
 <h2>With a bundler (no framework)</h2>
 
-<pre><code>bun add vivace</code></pre>
+<CodeBlock lang="shellscript" code={"bun add vivace"} />
 
-<pre><code>{bundler}</code></pre>
+<CodeBlock lang="javascript" code={bundler} />
 
 <h2>Dynamic content</h2>
 
@@ -61,4 +62,4 @@ Vivace.init()`;
 	scanning and observation to a subtree:
 </p>
 
-<pre><code>{`Vivace.init(document.querySelector('#app'))`}</code></pre>
+<CodeBlock lang="javascript" code={`Vivace.init(document.querySelector('#app'))`} />

@@ -1,3 +1,15 @@
+<script lang="ts">
+	import CodeBlock from '$lib/components/CodeBlock.svelte';
+	import Callout from '$lib/components/Callout.svelte';
+
+	const api = `import Vivace from 'vivace'
+
+Vivace.trigger(el)  // fire or restart, regardless of trigger type
+Vivace.pause(el)    // freeze mid-animation
+Vivace.play(el)     // unpause — or fire if it never ran
+Vivace.destroy()    // remove all listeners and observers`;
+</script>
+
 <svelte:head>
 	<title>Triggers — Vivace</title>
 </svelte:head>
@@ -78,21 +90,21 @@
 	element re-arms whenever it leaves the viewport:
 </p>
 
-<pre><code>{`<div data-viv="@sl-y" data-viv-on="appearing" data-viv-repeat-scroll>`}</code></pre>
+<CodeBlock
+	lang="html"
+	code={`<div data-viv="@sl-y" data-viv-on="appearing" data-viv-repeat-scroll>`}
+/>
 
 <h2>Programmatic control</h2>
 
-<pre><code>{`import Vivace from 'vivace'
-
-Vivace.trigger(el)  // fire or restart, regardless of trigger type
-Vivace.pause(el)    // freeze mid-animation
-Vivace.play(el)     // unpause — or fire if it never ran
-Vivace.destroy()    // remove all listeners and observers`}</code></pre>
+<CodeBlock lang="typescript" code={api} />
 
 <h2>Accessibility</h2>
 
-<p>
-	Under <code>prefers-reduced-motion: reduce</code>, every animation collapses to an instant snap:
-	entrances appear immediately, exits still hide. No content is ever lost behind a paused entrance
-	animation.
-</p>
+<Callout kind="tip">
+	<p>
+		Under <code>prefers-reduced-motion: reduce</code>, every animation collapses to an instant
+		snap: entrances appear immediately, exits still hide. No content is ever lost behind a
+		paused entrance animation.
+	</p>
+</Callout>

@@ -1,3 +1,17 @@
+<script lang="ts">
+	import CodeBlock from '$lib/components/CodeBlock.svelte';
+	import Callout from '$lib/components/Callout.svelte';
+
+	const setup = `import Vivace from 'vivace'
+import 'vivace/vivace.css'
+
+Vivace.init()`;
+
+	const first = `<div data-viv="@fd @sl-y_ease-out-back" data-viv-on="appearing">
+  Fades in while sliding up, when scrolled into view.
+</div>`;
+</script>
+
 <svelte:head>
 	<title>Getting started — Vivace</title>
 </svelte:head>
@@ -13,33 +27,32 @@
 
 <h2>Install</h2>
 
-<pre><code>bun add vivace   # or npm install vivace</code></pre>
+<CodeBlock lang="shellscript" code={'bun add vivace   # or npm install vivace'} />
 
 <h2>Set up</h2>
 
-<pre><code>{`import Vivace from 'vivace'
-import 'vivace/vivace.css'
-
-Vivace.init()`}</code></pre>
+<CodeBlock lang="typescript" code={setup} />
 
 <p>
 	<code>init()</code> scans the page for <code>[data-viv]</code> elements and keeps watching —
 	anything your framework mounts later is registered automatically via a MutationObserver. Call
-	<code>Vivace.destroy()</code> if you ever need to tear the engine down. Framework-specific
-	wiring lives in the <a href="/docs/frameworks/html">Frameworks</a> section.
+	<code>Vivace.destroy()</code> if you ever need to tear the engine down.
 </p>
+
+<Callout kind="note">
+	<p>
+		Framework-specific wiring — SvelteKit, React/Next, Vue/Nuxt, plain HTML — lives in the
+		<a href="/docs/frameworks/html">Frameworks</a> section.
+	</p>
+</Callout>
 
 <h2>First animation</h2>
 
-<pre><code>{`<div data-viv="@fd @sl-y_ease-out-back" data-viv-on="appearing">
-  Fades in while sliding up, when scrolled into view.
-</div>`}</code></pre>
+<CodeBlock lang="html" code={first} />
 
 <p>Live:</p>
 
-<div
-	class="flex justify-center rounded-box border border-base-300 bg-base-200/50 p-8 not-prose"
->
+<div class="flex justify-center rounded-box border border-base-300 bg-base-200/50 p-8 not-prose">
 	<div
 		data-viv="@fd @sl-y_ease-out-back"
 		data-viv-on="appearing"
@@ -48,6 +61,13 @@ Vivace.init()`}</code></pre>
 		Fades in while sliding up
 	</div>
 </div>
+
+<Callout kind="tip">
+	<p>
+		Fastest way to learn the grammar: compose visually in the
+		<a href="/playground">playground</a> and copy the attribute out.
+	</p>
+</Callout>
 
 <h2>Migrating from A.css</h2>
 

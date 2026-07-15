@@ -1,3 +1,8 @@
+<script lang="ts">
+	import CodeBlock from '$lib/components/CodeBlock.svelte';
+	import Callout from '$lib/components/Callout.svelte';
+</script>
+
 <svelte:head>
 	<title>Attributes — Vivace</title>
 </svelte:head>
@@ -12,13 +17,15 @@
 	— the <code>_</code> delimits them — and separate keys are space-separated:
 </p>
 
-<pre><code>{`data-viv="@fd @sl-y_ease-out-back_delay-2"`}</code></pre>
+<CodeBlock lang="html" code={`<div data-viv="@fd @sl-y_ease-out-back_delay-2">`} />
 
-<p>
-	That's one fade, plus one slide-up that carries an easing and a delay. Everything applies to the
-	same element, so where a modifier sits is just notation — attach it to the key it belongs with
-	for readability.
-</p>
+<Callout kind="note">
+	<p>
+		That's one fade, plus one slide-up carrying an easing and a delay. Everything applies to the
+		same element, so where a modifier sits is just notation — attach it to the key it belongs
+		with for readability.
+	</p>
+</Callout>
 
 <h3>Variant grammar</h3>
 
@@ -60,7 +67,10 @@
 	full control:
 </p>
 
-<pre><code>{`<div data-viv="@sl-y" style="--AD: 1.2; --AL: 2; --AE: var(--Aout-expo)">`}</code></pre>
+<CodeBlock
+	lang="html"
+	code={`<div data-viv="@sl-y" style="--AD: 1.2; --AL: 2; --AE: var(--Aout-expo)">`}
+/>
 
 <table>
 	<thead>

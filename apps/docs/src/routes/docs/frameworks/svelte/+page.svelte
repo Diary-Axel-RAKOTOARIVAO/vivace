@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CodeBlock from '$lib/components/CodeBlock.svelte';
 	const layout = `<!-- src/routes/+layout.svelte -->
 <script>
   import Vivace from 'vivace'
@@ -43,11 +44,11 @@
 	browser, and the cleanup handles hot reloads and teardown. This site is built exactly this way.
 </p>
 
-<pre><code>{layout}</code></pre>
+<CodeBlock lang="svelte" code={layout} />
 
 <p>Then annotate any element, in any component:</p>
 
-<pre><code>{markup}</code></pre>
+<CodeBlock lang="svelte" code={markup} />
 
 <h2>Route changes & dynamic content</h2>
 
@@ -67,4 +68,4 @@
 
 <h2>Programmatic control</h2>
 
-<pre><code>{programmatic}</code></pre>
+<CodeBlock lang="svelte" code={programmatic} />
