@@ -1,0 +1,14 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @vb — Vibrate
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@vb') {
+  --AN: #{c.$kf-2};
+  --Avvbd: calc(360deg * var(--AL) * 6);
+  --ATX0: calc(10% * var(--AL));
+  --ARZ1: var(--Avvbd);
+  --ARNZ1: calc(var(--Avvbd) * -1);
+}

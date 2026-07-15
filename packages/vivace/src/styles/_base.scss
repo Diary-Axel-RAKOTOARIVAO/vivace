@@ -5,6 +5,11 @@
 //   data-viv-state="play"  — animation running / finished (fill: both)
 //   data-viv-paused        — freeze without restarting
 //
+// The state attribute is the animation hook: any element the engine put
+// into "play" runs the shared shorthand, whatever tokens it carries.
+// Key plugins only fill variables — they never need to register here
+// (this replaces A.css's %animationBase @extend chain).
+//
 // Timing knobs (settable from data-viv-* attributes or inline style):
 //   --AD  duration base (s)     --AS  speed multiplier
 //   --AE  easing                --AC  iteration count
@@ -15,31 +20,36 @@
 @use 'config' as c;
 @use 'mixins' as m;
 
-// Armed entrance animations stay invisible until triggered.
-[#{c.$state-attr}='idle'] {
-  opacity: 0;
-}
-
-// The single animation shorthand every preset runs through.
-// _child parents delegate the animation to their direct children.
-[#{c.$state-attr}='play']#{m.sel('@')},
-[#{c.$state-attr}='play']#{m.sel('_child')} > * {
+@mixin animation-shorthand {
   animation: var(--AN) calc(var(--AS, 1) * var(--AD, 0.5) * 1s) var(--AE, ease) var(--AC, 1)
     var(--ADR, normal) var(--ANM, both);
   animation-delay: calc(var(--ADL, 0s) + var(--Aord, 0) * var(--Aorv, 1) * 0.1s);
 }
 
-// _child parents orchestrate; they don't animate themselves.
-[#{c.$state-attr}='play']#{m.sel('_child')} {
-  animation: none;
+// Armed entrance animations stay invisible until triggered.
+[#{c.$state-attr}='idle'] {
+  opacity: 0;
 }
 
-[#{c.$paused-attr}]#{m.sel('@')},
+[#{c.$state-attr}='play'] {
+  @include animation-shorthand;
+}
+
+// _child parents orchestrate; their direct children animate instead.
+[#{c.$state-attr}='play']#{m.sel('_child')} {
+  animation: none;
+
+  > * {
+    @include animation-shorthand;
+  }
+}
+
+[#{c.$paused-attr}],
 [#{c.$paused-attr}]#{m.sel('_child')} > * {
   animation-play-state: paused;
 }
 
-// Shared variable table for every preset.
+// Shared variable table for every key.
 #{m.sel('@')} {
   --AL: 1;
   --AOXY: 50% 50%;
@@ -65,8 +75,8 @@
 // Accessibility: collapse motion to an instant snap so end states still
 // apply (content stays visible, out-animations still hide).
 @media (prefers-reduced-motion: reduce) {
-  [#{c.$state-attr}='play']#{m.sel('@')},
-  [#{c.$state-attr}='play']#{m.sel('_child')} > * {
+  [#{c.$state-attr}='play'],
+  [#{c.$state-attr}='play'] > * {
     animation-duration: 1ms !important;
     animation-delay: 0s !important;
     animation-iteration-count: 1 !important;

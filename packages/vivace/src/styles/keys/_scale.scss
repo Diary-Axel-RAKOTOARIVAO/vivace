@@ -1,0 +1,52 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @sc — Scale
+    -i: grow from 0 | -o: shrink to 0 | !: from/to 2x instead
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use 'sass:string';
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@sc') {
+  --AN: #{c.$kf-2};
+}
+
+@include m.key('@sc-i') {
+  --ASX0: 0;
+  --ASY0: 0;
+}
+
+@include m.key('@sc-i!') {
+  --ASX0: 2;
+  --ASY0: 2;
+}
+
+@include m.key('@sc-o') {
+  --ASX1: 0;
+  --ASY1: 0;
+}
+
+@include m.key('@sc-o!') {
+  --ASX1: 2;
+  --ASY1: 2;
+}
+
+@each $axis in (x, y) {
+  $a: string.to-upper-case('#{$axis}');
+
+  @include m.key('@sc-#{$axis}-i') {
+    --AS#{$a}0: 0;
+  }
+
+  @include m.key('@sc-#{$axis}-i!') {
+    --AS#{$a}0: 2;
+  }
+
+  @include m.key('@sc-#{$axis}-o') {
+    --AS#{$a}1: 0;
+  }
+
+  @include m.key('@sc-#{$axis}-o!') {
+    --AS#{$a}1: 2;
+  }
+}

@@ -1,0 +1,40 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @bn — Bounce (scale spring)
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use 'sass:string';
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@bn') {
+  --AN: #{c.$kf-10};
+  --AD: 1;
+}
+
+// Bare '@bn' bounces both axes; '@bn-x' / '@bn-y' isolate one.
+@each $axis in (x, y) {
+  $a: string.to-upper-case('#{$axis}');
+
+  #{m.sel('@bn')}:not(#{m.sel('@bn-')}),
+  #{m.sel('@bn-#{$axis}')} {
+    --Arb#{$axis}: 1;
+    @for $i from 0 through 9 {
+      --AS#{$a}#{$i}: calc(1 - #{m.alt($i)} * var(--ASP#{$i}) * var(--Arb#{$axis}));
+    }
+  }
+}
+
+#{m.sel('@bn!')} {
+  --Arbx: -1;
+  --Arby: -1;
+}
+
+@include m.invert(('@bn-x',), --Arbx);
+@include m.invert(('@bn-y',), --Arby);
+
+// Composed with @sl (keys/_slide): start twice as far out so the spring
+// lands on target.
+#{m.sel('@bn')}#{m.sel('@sl')} {
+  --ATX0: calc(var(--Avslx) * 2);
+  --ATY0: calc(var(--Avsly) * 2);
+}

@@ -1,0 +1,56 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @pr — Perspective (fly along Z)
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@pr') {
+  --AN: #{c.$kf-2};
+  --AP: calc(var(--Avpr, 500) * var(--Apvv, 1) * var(--Apru, 1px));
+  perspective: var(--AP);
+}
+
+@include m.key('@pr-i') {
+  --AOZ0: 50vw;
+}
+
+@include m.key('@pr-i!') {
+  --AOZ0: -50vw;
+}
+
+@include m.key('@pr-o') {
+  --AOZ10: 50vw;
+}
+
+@include m.key('@pr-o!') {
+  --AOZ10: -50vw;
+}
+
+// Unit switches
+@include m.key('@pr-vw') {
+  --Avpr: 25;
+  --Apru: 1vw;
+}
+
+@include m.key('@pr-vh') {
+  --Avpr: 25;
+  --Apru: 1vh;
+}
+
+// Perspective distance ramp: @pr-up shortens (more drama), @pr-down eases off
+@include m.key('@pr-none') {
+  --Apvv: 0;
+}
+
+@each $plus, $v in c.$ramp-up {
+  @include m.key('@pr-up#{$plus}') {
+    --Apvv: #{$v};
+  }
+}
+
+@each $plus, $v in c.$ramp-down {
+  @include m.key('@pr-down#{$plus}') {
+    --Apvv: #{$v};
+  }
+}

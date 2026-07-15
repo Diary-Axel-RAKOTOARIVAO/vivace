@@ -1,0 +1,29 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @dr — Drop (fall in and bounce on landing) — new in Vivace
+    ! rises from below instead
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@dr') {
+  --AN: #{c.$kf-10};
+  --AD: 1;
+  --AOP0: 0;
+  --AOP1: 1;
+  --Ardr: 1;
+  --ATY0: calc(-150% * var(--AL) * var(--Ardr));
+  // Odd slots touch down at 0, even slots rebound upward with spring decay
+  @for $i from 1 through 9 {
+    @if m.alt($i) == -1 {
+      --ATY#{$i}: 0;
+    } @else {
+      --ATY#{$i}: calc(-100% * var(--ASP#{$i}) * var(--Ardr));
+    }
+  }
+  --ATY10: 0;
+}
+
+#{m.sel('@dr!')} {
+  --Ardr: -1;
+}

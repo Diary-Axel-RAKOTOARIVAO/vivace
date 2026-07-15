@@ -1,0 +1,15 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MODIFIER: _repeat — iteration count (bare = infinite)
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../mixins' as m;
+
+@include m.key('_repeat') {
+  --AC: var(--Alc, infinite);
+}
+
+@for $n from 2 through 5 {
+  @include m.key('_repeat-#{$n}') {
+    --Alc: #{$n};
+  }
+}

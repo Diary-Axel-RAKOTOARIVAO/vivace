@@ -1,0 +1,28 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @sp — Spiral (translate + counter-rotating orbit)
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@sp') {
+  --AN: #{c.$kf-2};
+  --AD: 0.7;
+  --Avspx: calc(100% * var(--AL) * var(--Arsp, 1));
+  --Avspd: calc(360deg * var(--AL));
+  --Avspdr: calc(var(--Avspd) * -1);
+}
+
+@include m.key('@sp-i') {
+  --ATX0: var(--Avspx);
+  --ARZ1: var(--Avspdr);
+  --ARNZ1: var(--Avspd);
+}
+
+@include m.key('@sp-o') {
+  --ATX1: var(--Avspx);
+  --ARZ1: var(--Avspdr);
+  --ARNZ1: var(--Avspd);
+}
+
+@include m.invert(('@sp-i', '@sp-o'), --Arsp);

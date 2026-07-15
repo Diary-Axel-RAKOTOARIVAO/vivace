@@ -1,0 +1,34 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @rt — Rotate
+    bare axis: full 360° spin | -i/-o: 90° fold in/out
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use 'sass:string';
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@rt') {
+  transform-style: preserve-3d;
+  --AN: #{c.$kf-2};
+  --AD: 1;
+}
+
+@each $axis in (x, y, z) {
+  $a: string.to-upper-case('#{$axis}');
+
+  @include m.key('@rt-#{$axis}') {
+    --AR#{$a}1: calc(360deg * var(--Arr#{$axis}, 1));
+  }
+
+  @include m.key('@rt-#{$axis}-i') {
+    --AR#{$a}0: calc(90deg * var(--Arr#{$axis}, 1));
+    --AR#{$a}1: 0;
+  }
+
+  @include m.key('@rt-#{$axis}-o') {
+    --AR#{$a}0: 0;
+    --AR#{$a}1: calc(90deg * var(--Arr#{$axis}, 1));
+  }
+
+  @include m.invert(('@rt-#{$axis}', '@rt-#{$axis}-i', '@rt-#{$axis}-o'), --Arr#{$axis});
+}

@@ -1,0 +1,29 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @sl — Slide
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use 'sass:string';
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@sl') {
+  --AN: #{c.$kf-2};
+  --Avsl: calc(-100% * var(--AL));
+}
+
+@each $axis in (x, y) {
+  $a: string.to-upper-case('#{$axis}');
+
+  @include m.key('@sl-#{$axis}') {
+    --Avsl#{$axis}: calc(var(--Avsl) * var(--Ars#{$axis}, 1));
+    --AT#{$a}0: var(--Avsl#{$axis});
+    --AT#{$a}1: 0;
+  }
+
+  @include m.key('@sl-#{$axis}-o') {
+    --AT#{$a}0: 0;
+    --AT#{$a}1: var(--Avsl#{$axis});
+  }
+
+  @include m.invert(('@sl-#{$axis}', '@sl-#{$axis}-o'), --Ars#{$axis});
+}

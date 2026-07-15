@@ -1,0 +1,21 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @sw — Swing (pendulum from top edge) — new in Vivace
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@sw') {
+  --AN: #{c.$kf-10};
+  --AD: 1.2;
+  --AOXY: 50% 0;
+  --Arsw: 1;
+  @for $i from 0 through 9 {
+    --ARZ#{$i}: calc(#{m.alt($i) * 80deg} * var(--ASP#{$i}) * var(--Arsw));
+  }
+  --ARZ10: 0deg;
+}
+
+#{m.sel('@sw!')} {
+  --Arsw: -1;
+}

@@ -1,0 +1,19 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @pop — Pop (scale-in with elastic overshoot) — new in Vivace
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@pop') {
+  --AN: #{c.$kf-10};
+  --AD: 0.8;
+  --AOP0: 0;
+  --AOP1: 1;
+  --ASX0: 0;
+  --ASY0: 0;
+  @for $i from 1 through 9 {
+    --ASX#{$i}: calc(1 - #{m.alt($i)} * var(--ASP#{$i}));
+    --ASY#{$i}: calc(1 - #{m.alt($i)} * var(--ASP#{$i}));
+  }
+}

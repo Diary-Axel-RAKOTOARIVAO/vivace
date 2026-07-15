@@ -1,0 +1,21 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MODIFIER: _lv — intensity level
+    Scales distances, angles and spring amplitude via --AL.
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../mixins' as m;
+
+$lv-up: ('': 1.5, '+': 2, '++': 2.5, '+++': 3);
+$lv-down: ('': 0.8, '+': 0.6, '++': 0.4, '+++': 0.2);
+
+@each $plus, $v in $lv-up {
+  @include m.key('_lv-up#{$plus}') {
+    --AL: #{$v};
+  }
+}
+
+@each $plus, $v in $lv-down {
+  @include m.key('_lv-down#{$plus}') {
+    --AL: #{$v};
+  }
+}

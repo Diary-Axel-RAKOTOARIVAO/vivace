@@ -1,0 +1,19 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MODIFIER: _alt / _rev — playback direction
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../mixins' as m;
+
+@include m.key('_alt') {
+  --ADR: alternate;
+  --AC: 2;
+}
+
+@include m.key('_alt-rev') {
+  --ADR: alternate-reverse;
+  --AC: 2;
+}
+
+@include m.key('_rev') {
+  --ADR: reverse;
+}

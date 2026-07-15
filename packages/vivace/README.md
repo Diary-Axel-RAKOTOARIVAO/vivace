@@ -102,11 +102,42 @@ Vivace.destroy()       // tear down observers/listeners (SPA cleanup)
 
 ## SCSS
 
-The shipped `vivace.css` is compiled from SCSS. Consuming the source lets you
-re-configure the attribute name, spring table, stagger size and more:
+The shipped `vivace.css` is compiled from SCSS with a plugin-per-file layout
+(inherited from A.css): every key lives in `src/styles/keys/`, every modifier
+group in `src/styles/modifiers/`.
+
+Consuming the source lets you re-configure the attribute name, spring table,
+stagger size and more:
 
 ```scss
 @use 'vivace/scss' with ($child-count: 20);
+```
+
+**Custom bundles** — write your own entry with only the plugins you want:
+
+```scss
+@use 'vivace/src/styles/keyframes';
+@use 'vivace/src/styles/base';
+@use 'vivace/src/styles/keys/fade';
+@use 'vivace/src/styles/keys/slide';
+@use 'vivace/src/styles/modifiers/easing';
+```
+
+**Adding an animation key** — drop a file in `keys/` that fills variable
+slots (pick the 2-step or 10-step keyframe), add one `@use` line to
+`keys/_index.scss`, done. The engine picks it up with zero JS changes:
+
+```scss
+// keys/_wobble.scss
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@wb') {
+  --AN: #{c.$kf-10};
+  @for $i from 0 through 9 {
+    --ARZ#{$i}: calc(#{m.alt($i) * 20deg} * var(--ASP#{$i}));
+  }
+}
 ```
 
 ## Accessibility

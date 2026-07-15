@@ -1,0 +1,35 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MODIFIER: _ease — easing curves
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use 'sass:list';
+@use '../mixins' as m;
+
+@include m.key('_ease') {
+  --AE: var(--Ale) !important;
+}
+
+// (token value) pairs, emitted in order. Substring matching means
+// '_ease-in' also matches '_ease-in-out' — short tokens stay first so
+// the more specific (longer) token always wins the cascade.
+$easings: (
+  ('lin', linear),
+  ('in', ease-in),
+  ('out', ease-out),
+  ('in-out', ease-in-out),
+  ('circ', var(--Acirc)),
+  ('in-circ', var(--Ain-circ)),
+  ('out-circ', var(--Aout-circ)),
+  ('back', var(--Aback)),
+  ('in-back', var(--Ain-back)),
+  ('out-back', var(--Aout-back)),
+  ('expo', var(--Aexpo)),
+  ('in-expo', var(--Ain-expo)),
+  ('out-expo', var(--Aout-expo))
+);
+
+@each $pair in $easings {
+  @include m.key('_ease-#{list.nth($pair, 1)}') {
+    --Ale: #{list.nth($pair, 2)};
+  }
+}

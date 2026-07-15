@@ -1,0 +1,26 @@
+// Vivace — animation keys, one plugin file per key (A.css style).
+//
+// To add a key: drop a new _yourkey.scss in this directory following the
+// pattern of any file here (fill variable slots, pick viv-2 or viv-10),
+// then add its @use line below. Order matters only for composed rules —
+// a plugin referencing another key's variables (see _bounce) must load
+// after it.
+//
+// Grammar reminder: @key[-axis][-i|-o][!]
+//   -i / -o  enter / exit variant (bare key = its natural direction)
+//   !        invert the motion direction (works on any variant)
+
+@use 'fade';
+@use 'slide';
+@use 'rotate';
+@use 'scale';
+@use 'spiral';
+@use 'vibrate';
+@use 'perspective';
+@use 'bounce';
+@use 'shake';
+@use 'flick';
+@use 'blur';
+@use 'swing';
+@use 'pop';
+@use 'drop';

@@ -1,0 +1,16 @@
+// Vivace — modifiers (_tokens), one plugin file per group.
+//
+// Modifiers tune the shared animation variables and compose with any
+// key: data-viv="@sl-y|_ease-out-back|_delay-2".
+//
+// To add a modifier group: drop a _yourmodifier.scss here and add its
+// @use line below.
+
+@use 'easing';
+@use 'repeat';
+@use 'delay';
+@use 'speed';
+@use 'level';
+@use 'origin';
+@use 'direction';
+@use 'child';

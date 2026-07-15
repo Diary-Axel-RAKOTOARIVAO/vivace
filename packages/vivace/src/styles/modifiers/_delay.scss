@@ -1,0 +1,12 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MODIFIER: _delay — start delay in 0.1s steps
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../config' as c;
+@use '../mixins' as m;
+
+@for $n from 1 through c.$delay-steps {
+  @include m.key('_delay-#{$n}') {
+    --ADL: #{$n * 0.1s};
+  }
+}

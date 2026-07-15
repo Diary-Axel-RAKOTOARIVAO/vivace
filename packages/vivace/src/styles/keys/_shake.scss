@@ -1,0 +1,31 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @sh — Shake (translate spring)
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use 'sass:string';
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@sh') {
+  --AN: #{c.$kf-10};
+  --AD: 1;
+}
+
+@each $axis in (x, y) {
+  $a: string.to-upper-case('#{$axis}');
+
+  @include m.key('@sh-#{$axis}') {
+    --Arsh#{$axis}: 1;
+    @for $i from 0 through 9 {
+      --AT#{$a}#{$i}: calc(#{m.alt($i) * 100%} * var(--ASP#{$i}) * var(--Arsh#{$axis}));
+    }
+  }
+
+  @include m.invert(('@sh-#{$axis}',), --Arsh#{$axis});
+}
+
+// Composed with @sl (keys/_slide)
+#{m.sel('@sh')}#{m.sel('@sl')} {
+  --ATX0: calc(var(--Avslx) * 2);
+  --ATY0: calc(var(--Avsly) * 2);
+}

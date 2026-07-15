@@ -1,0 +1,52 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @fl — Flick (rotational spring settle)
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use 'sass:string';
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@fl') {
+  transform-style: preserve-3d;
+  --AN: #{c.$kf-10};
+  --AD: 1.5;
+  --Arf: 1;
+  --Avad: 0deg;
+  @for $i from 0 through 9 {
+    --Avrs#{$i}: calc(#{m.alt($i) * -120deg} * var(--ASP#{$i}) * var(--Arf) + var(--Avad));
+  }
+  --Avrs10: calc(0deg + var(--Avad));
+}
+
+@each $axis in (x, y, z) {
+  $a: string.to-upper-case('#{$axis}');
+
+  @include m.key('@fl-#{$axis}') {
+    @for $i from 0 through 10 {
+      --AR#{$a}#{$i}: var(--Avrs#{$i});
+    }
+  }
+}
+
+// Out variants settle at 90° (folded away) instead of 0°
+#{m.sel('@fl-x-o')},
+#{m.sel('@fl-y-o')},
+#{m.sel('@fl-z-o')} {
+  --Avad: 90deg;
+}
+
+@each $axis in (x, y, z) {
+  @include m.invert(('@fl-#{$axis}', '@fl-#{$axis}-o'), --Arf);
+}
+
+#{m.sel('@fl-z-o!')} {
+  --Avad: -90deg;
+}
+
+// Composed with @sl (keys/_slide)
+#{m.sel('@fl')}#{m.sel('@sl')} {
+  --ATX0: calc(var(--Avslx) * 2);
+  --ATY0: calc(var(--Avsly) * 2);
+  --ATX1: unset;
+  --ATY1: unset;
+}

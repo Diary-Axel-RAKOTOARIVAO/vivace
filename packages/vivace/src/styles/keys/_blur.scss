@@ -1,0 +1,22 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @bl — Blur (soft-focus fade) — new in Vivace
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@bl') {
+  --AN: #{c.$kf-2};
+  --Avbl: calc(14px * var(--AL));
+  --AF0: blur(var(--Avbl));
+  --AF1: blur(0);
+  --AOP0: 0;
+  --AOP1: 1;
+}
+
+@include m.key('@bl-o') {
+  --AF0: blur(0);
+  --AF1: blur(var(--Avbl));
+  --AOP0: 1;
+  --AOP1: 0;
+}

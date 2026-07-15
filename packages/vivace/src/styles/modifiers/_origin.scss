@@ -1,0 +1,25 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MODIFIER: _origin — transform origin
+      lt | t | rt
+      l  |   | r
+      lb | b | rb
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../mixins' as m;
+
+$origins: (
+  't': 50% 0,
+  'r': 100% 50%,
+  'rt': 100% 0,
+  'b': 50% 100%,
+  'rb': 100% 100%,
+  'l': 0 50%,
+  'lb': 0 100%,
+  'lt': 0 0,
+);
+
+@each $pos, $v in $origins {
+  @include m.key('_origin-#{$pos}') {
+    --AOXY: #{$v};
+  }
+}

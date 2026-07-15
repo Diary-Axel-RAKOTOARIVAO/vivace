@@ -1,0 +1,41 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MODIFIER: _child — stagger the animation across direct children
+    (The parent/child animation hand-off itself lives in _base.)
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../config' as c;
+@use '../mixins' as m;
+
+// Ascend: first child leads. Descend: last child leads.
+@for $n from 2 through c.$child-count {
+  #{m.sel('_child-ascend')} > :nth-child(#{$n}) {
+    --Aord: #{$n - 1};
+  }
+
+  #{m.sel('_child-descend')} > :nth-last-child(#{$n}) {
+    --Aord: #{$n - 1};
+  }
+}
+
+#{m.sel('_child-odd')} > :nth-child(odd) {
+  --Aord: 1;
+}
+
+#{m.sel('_child-even')} > :nth-child(even) {
+  --Aord: 1;
+}
+
+// Stagger velocity: scales the 0.1s per-order delay step
+@each $plus, $v in (('': 0.8, '+': 0.4, '++': 0.2, '+++': 0.1)) {
+  #{m.sel('_child-ascend-up#{$plus}')},
+  #{m.sel('_child-descend-up#{$plus}')} {
+    --Aorv: #{$v};
+  }
+}
+
+@each $plus, $v in c.$ramp-down {
+  #{m.sel('_child-ascend-down#{$plus}')},
+  #{m.sel('_child-descend-down#{$plus}')} {
+    --Aorv: #{$v};
+  }
+}
