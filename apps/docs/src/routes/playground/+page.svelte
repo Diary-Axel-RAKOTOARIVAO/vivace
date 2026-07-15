@@ -4,13 +4,17 @@
 
 	import PreviewRow from '$lib/components/PreviewRow.svelte';
 	import Subject from '$lib/components/Subject.svelte';
+	import PlaygroundTour, { TOUR_KEY } from '$lib/components/PlaygroundTour.svelte';
 	import { playground } from '$lib/stores/playground.svelte';
 	import { compose, toSnippet } from '$lib/compose';
-	import { EXAMPLES } from '$lib/examples';
 	import { SUBJECTS } from '$lib/subjects';
+
+	let tourOpen = $state(false);
 
 	// Shared URLs (?c=@fd @sl-y_ease-out-back&on=appearing) seed the composer.
 	onMount(() => {
+		if (!localStorage.getItem(TOUR_KEY)) tourOpen = true;
+
 		const params = new URLSearchParams(window.location.search);
 		const c = params.get('c');
 		if (!c) return;
@@ -49,8 +53,8 @@
 	let childCount = $state(3);
 
 	// Preview subject: a mock page section the composition applies to.
-	let template = $state('card');
-	let variant = $state('vertical');
+	let template = $state('stats');
+	let variant = $state('');
 	const subject = $derived(SUBJECTS.find((s) => s.id === template) ?? SUBJECTS[0]);
 
 	function pickSubject(id: string) {
@@ -100,6 +104,7 @@
 		<!-- generated markup, floating panel -->
 		<div
 			class="absolute top-4 left-4 z-10 max-w-[calc(100%-2rem)] overflow-x-auto rounded-box border border-base-300 bg-base-100/95 px-4 py-3 shadow-sm"
+			data-tour="code"
 		>
 			<code class="block bg-transparent p-0 text-xs leading-relaxed whitespace-pre"><span
 					class="text-base-content/40">&lt;div&nbsp;</span
@@ -115,6 +120,7 @@
 			class="absolute top-4 right-4 z-10 flex flex-col gap-0.5 rounded-box border border-base-300 bg-base-100/95 p-1 shadow-sm"
 			role="group"
 			aria-label="Preview subject"
+			data-tour="subjects"
 		>
 			{#each SUBJECTS as s (s.id)}
 				<button
@@ -146,6 +152,7 @@
 		{#if subject.variants || subject.repeat}
 			<div
 				class="absolute bottom-4 left-4 z-10 flex items-center gap-1 rounded-box border border-base-300 bg-base-100/95 p-1.5 shadow-sm"
+				data-tour="options"
 			>
 				{#if subject.variants}
 					{#each subject.variants as v (v.id)}
@@ -177,16 +184,17 @@
 			</div>
 		{/if}
 
-		<!-- examples, floating bottom-center -->
+		<!-- presets suited to the current subject, floating bottom-center -->
 		<div
-			class="absolute bottom-4 left-1/2 z-10 flex max-w-[70%] -translate-x-1/2 items-center gap-1.5 overflow-x-auto rounded-box border border-base-300 bg-base-100/95 p-1.5 shadow-sm"
+			class="absolute bottom-4 left-1/2 z-10 flex max-w-[55%] -translate-x-1/2 items-center gap-1.5 overflow-x-auto rounded-box border border-base-300 bg-base-100/95 p-1.5 shadow-sm"
+			data-tour="presets"
 		>
-			{#each EXAMPLES as example (example.name)}
+			{#each subject.presets as preset (preset.name)}
 				<button
 					class="btn btn-ghost btn-xs shrink-0 font-mono font-normal"
-					onclick={() => playground.load(example.viv, example.on)}
+					onclick={() => playground.load(preset.viv, preset.on)}
 				>
-					{example.name}
+					{preset.name}
 				</button>
 			{/each}
 		</div>
@@ -209,7 +217,7 @@
 	>
 		<div class="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
 			<!-- Target & origin widgets — on top -->
-			<section>
+			<section data-tour="widgets">
 				<h2 class="mb-3 text-[11px] font-semibold tracking-wider text-base-content/50 uppercase">
 					Target · Origin
 				</h2>
@@ -280,7 +288,7 @@
 			</section>
 
 			<!-- Trigger -->
-			<section>
+			<section data-tour="trigger">
 				<h2 class="mb-3 text-[11px] font-semibold tracking-wider text-base-content/50 uppercase">
 					Trigger
 				</h2>
@@ -299,7 +307,7 @@
 			</section>
 
 			<!-- Composition groups -->
-			<section>
+			<section data-tour="composition">
 				<h2 class="mb-3 text-[11px] font-semibold tracking-wider text-base-content/50 uppercase">
 					Composition
 				</h2>
@@ -393,7 +401,10 @@
 		</div>
 
 		<!-- Action bar -->
-		<div class="grid grid-cols-[1fr_auto_auto_auto] gap-1.5 border-t border-base-300 p-3">
+		<div
+			class="grid grid-cols-[1fr_auto_auto_auto_auto] gap-1.5 border-t border-base-300 p-3"
+			data-tour="actions"
+		>
 			<button class="btn btn-primary btn-sm tracking-[0.15em]" onclick={play} disabled={!composition.complete}>
 				PLAY
 			</button>
@@ -424,9 +435,19 @@
 			>
 				<iconify-icon icon="lucide:bookmark-plus" width="14"></iconify-icon>
 			</button>
+			<button
+				class="btn btn-square btn-ghost btn-sm text-base-content/50"
+				title="How does this work?"
+				aria-label="Open the tour"
+				onclick={() => (tourOpen = true)}
+			>
+				<iconify-icon icon="lucide:circle-help" width="15"></iconify-icon>
+			</button>
 		</div>
 	</aside>
 </div>
+
+<PlaygroundTour bind:open={tourOpen} />
 
 <style>
 	/* Svelte-Flow-style dotted field */
