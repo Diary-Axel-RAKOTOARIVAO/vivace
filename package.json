@@ -1,0 +1,23 @@
+{
+  "name": "vivace-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "bun run --filter 'vivace' build",
+    "test": "bun test packages",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "docs:dev": "bun run --filter 'docs' dev",
+    "docs:build": "bun run --filter 'docs' build",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "bun run build && changeset publish"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@changesets/cli": "^2.27.10"
+  }
+}
