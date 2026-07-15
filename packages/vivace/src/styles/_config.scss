@@ -1,0 +1,27 @@
+// Vivace — central configuration.
+// Everything selector-related keys off these, so forks can rename the
+// attribute or grow the stagger table without touching preset code.
+
+$attr: 'data-viv' !default;
+$state-attr: 'data-viv-state' !default;
+$paused-attr: 'data-viv-paused' !default;
+
+// Keyframe names registered by _keyframes.scss
+$kf-2: 'viv-2' !default;
+$kf-10: 'viv-10' !default;
+
+// Spring decay table — drives bounce/shake/flick/swing/pop/drop amplitude
+// per keyframe slot. Index 0 is the first (largest) oscillation.
+$spring: (0.3, 0.25, 0.15, 0.13, 0.08, 0.06, 0.04, 0.03, 0.02, 0.01) !default;
+
+// How many children the _child-ascend/_child-descend stagger covers.
+$child-count: 12 !default;
+
+// How many _delay-N steps to generate (each is N * 0.1s).
+$delay-steps: 8 !default;
+
+// Velocity ramps shared by _speed, @pr and _child modifiers.
+// '' is the bare token, '+'/'++'/'+++' intensify. Order matters:
+// substring matching means '+' rules must be emitted after the bare token.
+$ramp-up: ('': 0.8, '+': 0.6, '++': 0.4, '+++': 0.2) !default;
+$ramp-down: ('': 1.2, '+': 1.4, '++': 1.6, '+++': 1.8) !default;

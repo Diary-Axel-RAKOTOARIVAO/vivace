@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "outDir": "dist"
+  },
+  "include": ["src/index.ts", "src/core.ts", "src/triggers.ts", "src/observer.ts", "src/presets.ts", "src/types.ts"]
+}

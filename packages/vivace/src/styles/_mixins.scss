@@ -1,0 +1,61 @@
+// Vivace — selector helpers.
+//
+// The whole library is substring-matched attribute selectors:
+//   [data-viv*="@fd"] { ... }
+// These helpers keep preset code free of attribute-name noise and make
+// the substring-ordering rules explicit in one place.
+
+@use 'sass:list';
+@use 'sass:math';
+@use 'config' as c;
+
+// Raw selector string for a token, e.g. sel('@fd') => '[data-viv*="@fd"]'
+@function sel($token) {
+  @return '[#{c.$attr}*="#{$token}"]';
+}
+
+@mixin key($token) {
+  #{sel($token)} {
+    @content;
+  }
+}
+
+// Emit the invert rule for one or more tokens: token + '!' flips a
+// direction variable. e.g. invert(('@sl-x', '@sl-x-o'), --Arsx)
+@mixin invert($tokens, $var) {
+  $sels: ();
+  @each $t in $tokens {
+    $sels: list.append($sels, sel('#{$t}!'), comma);
+  }
+  #{$sels} {
+    #{$var}: -1;
+  }
+}
+
+// Spring amplitude for slot $i (0-based), scaled by --AL via --ASP*.
+@function spring($i) {
+  @return list.nth(c.$spring, $i + 1);
+}
+
+// Alternating sign: +1 for even $i, -1 for odd $i.
+@function alt($i) {
+  @if math.div($i, 2) == math.floor(math.div($i, 2)) {
+    @return 1;
+  }
+  @return -1;
+}
+
+// The full transform chain for keyframe slot $i.
+// $arnz additionally wraps a pre-translate Z rotation (spiral/vibrate orbit).
+@mixin transform-slot($i, $arnz: false) {
+  $pre: '';
+  @if $arnz {
+    $pre: 'rotateZ(var(--ARNZ#{$i}, 0)) ';
+  }
+  transform: var(--APP)
+    #{$pre}translate(var(--ATX#{$i}, 0), var(--ATY#{$i}, 0))
+    scale(var(--ASX#{$i}, 1), var(--ASY#{$i}, 1))
+    rotateX(var(--ARX#{$i}, 0))
+    rotateY(var(--ARY#{$i}, 0))
+    rotateZ(var(--ARZ#{$i}, 0));
+}

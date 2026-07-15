@@ -1,0 +1,51 @@
+// Vivace — the two generic keyframes.
+//
+// Every preset animates through one of these; presets never define their
+// own @keyframes. They only fill variable slots (--ATX0..10, --ASX0..10,
+// --ARX/Y/Z0..10, --AOP0/1, --AF0/1) that these frames read.
+//
+// viv-2  — two-slot (0% -> 100%), for simple in/out motion.
+// viv-10 — eleven-slot (0%..100% by 10%), for springs and oscillations.
+
+@use 'config' as c;
+@use 'mixins' as m;
+
+@keyframes #{c.$kf-2} {
+  0% {
+    opacity: var(--AOP0);
+    filter: var(--AF0, none);
+    transform-origin: var(--AOXY) var(--AOZ0, 0);
+    @include m.transform-slot(0, $arnz: true);
+  }
+
+  100% {
+    opacity: var(--AOP1);
+    filter: var(--AF1, none);
+    transform-origin: var(--AOXY) var(--AOZ10, 0);
+    @include m.transform-slot(1, $arnz: true);
+  }
+}
+
+@keyframes #{c.$kf-10} {
+  0% {
+    opacity: var(--AOP0);
+    transform-origin: var(--AOXY) var(--AOZ0, 0);
+    @include m.transform-slot(0);
+  }
+
+  10% {
+    opacity: var(--AOP1);
+    @include m.transform-slot(1);
+  }
+
+  @for $i from 2 through 9 {
+    #{$i * 10}% {
+      @include m.transform-slot($i);
+    }
+  }
+
+  100% {
+    transform-origin: var(--AOXY) var(--AOZ10, 0);
+    @include m.transform-slot(10);
+  }
+}

@@ -1,0 +1,74 @@
+// Vivace — engine surface.
+//
+// The JS engine drives everything through two attributes:
+//   data-viv-state="idle"  — armed but not yet triggered (hidden)
+//   data-viv-state="play"  — animation running / finished (fill: both)
+//   data-viv-paused        — freeze without restarting
+//
+// Timing knobs (settable from data-viv-* attributes or inline style):
+//   --AD  duration base (s)     --AS  speed multiplier
+//   --AE  easing                --AC  iteration count
+//   --ADL delay                 --ADR direction    --ANM fill mode
+//   --AL  intensity level (scales distances, angles, springs)
+
+@use 'sass:list';
+@use 'config' as c;
+@use 'mixins' as m;
+
+// Armed entrance animations stay invisible until triggered.
+[#{c.$state-attr}='idle'] {
+  opacity: 0;
+}
+
+// The single animation shorthand every preset runs through.
+// _child parents delegate the animation to their direct children.
+[#{c.$state-attr}='play']#{m.sel('@')},
+[#{c.$state-attr}='play']#{m.sel('_child')} > * {
+  animation: var(--AN) calc(var(--AS, 1) * var(--AD, 0.5) * 1s) var(--AE, ease) var(--AC, 1)
+    var(--ADR, normal) var(--ANM, both);
+  animation-delay: calc(var(--ADL, 0s) + var(--Aord, 0) * var(--Aorv, 1) * 0.1s);
+}
+
+// _child parents orchestrate; they don't animate themselves.
+[#{c.$state-attr}='play']#{m.sel('_child')} {
+  animation: none;
+}
+
+[#{c.$paused-attr}]#{m.sel('@')},
+[#{c.$paused-attr}]#{m.sel('_child')} > * {
+  animation-play-state: paused;
+}
+
+// Shared variable table for every preset.
+#{m.sel('@')} {
+  --AL: 1;
+  --AOXY: 50% 50%;
+  --APP: perspective(var(--AP, 500px));
+
+  // Named easing curves, exposed for --AE / _ease-* / data-viv-ease
+  --Acirc: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  --Ain-circ: cubic-bezier(0.6, 0.04, 0.98, 0.335);
+  --Aout-circ: cubic-bezier(0.075, 0.82, 0.165, 1);
+  --Aexpo: cubic-bezier(1, 0, 0, 1);
+  --Ain-expo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+  --Aout-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --Aback: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --Ain-back: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+  --Aout-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  // Spring decay table, scaled by intensity --AL
+  @for $i from 0 through 9 {
+    --ASP#{$i}: calc(#{list.nth(c.$spring, $i + 1)} * var(--AL));
+  }
+}
+
+// Accessibility: collapse motion to an instant snap so end states still
+// apply (content stays visible, out-animations still hide).
+@media (prefers-reduced-motion: reduce) {
+  [#{c.$state-attr}='play']#{m.sel('@')},
+  [#{c.$state-attr}='play']#{m.sel('_child')} > * {
+    animation-duration: 1ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+  }
+}

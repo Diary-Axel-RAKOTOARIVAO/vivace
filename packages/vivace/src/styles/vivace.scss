@@ -1,0 +1,10 @@
+// Vivace — attribute-driven CSS animation library.
+// https://github.com/aureon-it/vivace
+//
+// Compiled to dist/vivace.css; consume the SCSS directly to configure
+// (attribute name, spring table, child count) via @use ... with ().
+
+@use 'keyframes';
+@use 'base';
+@use 'keys';
+@use 'modifiers';
