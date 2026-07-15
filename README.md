@@ -5,7 +5,7 @@
 Attribute-driven CSS animations with a tiny, dependency-free trigger engine.
 
 ```html
-<div data-viv="@fd|@sl-y|_ease-out-back" data-viv-on="appearing">
+<div data-viv="@fd @sl-y_ease-out-back" data-viv-on="appearing">
   Fades in while sliding up, when scrolled into view.
 </div>
 ```

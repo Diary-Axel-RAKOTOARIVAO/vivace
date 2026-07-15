@@ -7,12 +7,18 @@
 <h2><code>data-viv</code> — the composition</h2>
 
 <p>
-	A composition is a list of tokens joined with <code>|</code>. <strong>Keys</strong> (prefix
-	<code>@</code>) are animations; <strong>modifiers</strong> (prefix <code>_</code>) tune timing,
-	intensity and targeting. Keys and modifiers stack freely:
+	<strong>Keys</strong> (prefix <code>@</code>) are animations; <strong>modifiers</strong> (prefix
+	<code>_</code>) tune timing, intensity and targeting. Modifiers concatenate directly onto a key
+	— the <code>_</code> delimits them — and separate keys are space-separated:
 </p>
 
-<pre><code>{`data-viv="@fd|@sl-y|_ease-out-back|_delay-2"`}</code></pre>
+<pre><code>{`data-viv="@fd @sl-y_ease-out-back_delay-2"`}</code></pre>
+
+<p>
+	That's one fade, plus one slide-up that carries an easing and a delay. Everything applies to the
+	same element, so where a modifier sits is just notation — attach it to the key it belongs with
+	for readability.
+</p>
 
 <h3>Variant grammar</h3>
 

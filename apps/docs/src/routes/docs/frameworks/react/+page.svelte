@@ -27,9 +27,9 @@ export default function App() {
 	Annotate JSX with the same attributes — <code>data-*</code> passes straight through:
 </p>
 
-<pre><code>{`<h1 data-viv="@fd|@sl-y|_ease-out-expo">Hello</h1>
+<pre><code>{`<h1 data-viv="@fd @sl-y_ease-out-expo">Hello</h1>
 
-<ul data-viv="@fd|_child-ascend" data-viv-on="appearing">
+<ul data-viv="@fd_child-ascend" data-viv-on="appearing">
   {items.map((item) => (
     <li key={item.id}>{item.label}</li>
   ))}

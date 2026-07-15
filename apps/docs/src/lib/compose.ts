@@ -9,17 +9,26 @@ export interface Composition {
 }
 
 /**
- * Resolve the chain into a data-viv composition — animation keys first,
- * then modifiers, with the trigger deciding data-viv-on.
+ * Resolve the chain into a data-viv composition using the A.css-style
+ * notation: each @key starts a group, _modifiers concatenate onto the
+ * preceding key (the _ prefix delimits them), and groups are separated
+ * by spaces — "@fd @sl-y_ease-out-back".
  */
 export function compose(items: ChainItem[], on: VivTrigger): Composition {
-	const animations = items.filter((i) => i.token.startsWith('@')).map((i) => i.token);
-	const modifiers = items.filter((i) => i.token.startsWith('_')).map((i) => i.token);
+	const groups: string[] = [];
+	for (const { token } of items) {
+		if (!token) continue;
+		if (token.startsWith('_') && groups.length > 0) {
+			groups[groups.length - 1] += token;
+		} else {
+			groups.push(token);
+		}
+	}
 
 	return {
-		viv: [...animations, ...modifiers].join('|'),
+		viv: groups.join(' '),
 		on,
-		complete: animations.length > 0
+		complete: items.some((i) => i.token.startsWith('@'))
 	};
 }
 

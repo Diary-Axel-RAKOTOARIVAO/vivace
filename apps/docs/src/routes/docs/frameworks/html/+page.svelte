@@ -5,9 +5,9 @@
     <link rel="stylesheet" href="https://esm.sh/vivace/dist/vivace.min.css" />
   </head>
   <body>
-    <h1 data-viv="@fd|@sl-y|_ease-out-expo">Hello</h1>
+    <h1 data-viv="@fd @sl-y_ease-out-expo">Hello</h1>
 
-    <section data-viv="@fd|_child-ascend" data-viv-on="appearing">
+    <section data-viv="@fd_child-ascend" data-viv-on="appearing">
       <p>Staggered</p>
       <p>one after</p>
       <p>another.</p>

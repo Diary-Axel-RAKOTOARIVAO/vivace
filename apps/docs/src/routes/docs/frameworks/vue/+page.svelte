@@ -13,9 +13,9 @@ onUnmounted(() => Vivace.destroy())
   <RouterView />
 </template>`;
 
-	const markup = `<h1 data-viv="@fd|@sl-y|_ease-out-expo">Hello</h1>
+	const markup = `<h1 data-viv="@fd @sl-y_ease-out-expo">Hello</h1>
 
-<ul data-viv="@fd|_child-ascend" data-viv-on="appearing">
+<ul data-viv="@fd_child-ascend" data-viv-on="appearing">
   <li v-for="item in items" :key="item.id">{{ item.label }}</li>
 </ul>`;
 

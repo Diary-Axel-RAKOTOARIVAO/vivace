@@ -31,7 +31,7 @@ Vivace.init()`}</code></pre>
 
 <h2>First animation</h2>
 
-<pre><code>{`<div data-viv="@fd|@sl-y|_ease-out-back" data-viv-on="appearing">
+<pre><code>{`<div data-viv="@fd @sl-y_ease-out-back" data-viv-on="appearing">
   Fades in while sliding up, when scrolled into view.
 </div>`}</code></pre>
 
@@ -41,7 +41,7 @@ Vivace.init()`}</code></pre>
 	class="flex justify-center rounded-box border border-base-300 bg-base-200/50 p-8 not-prose"
 >
 	<div
-		data-viv="@fd|@sl-y|_ease-out-back"
+		data-viv="@fd @sl-y_ease-out-back"
 		data-viv-on="appearing"
 		class="rounded-field bg-primary px-6 py-3 font-semibold text-primary-content"
 	>

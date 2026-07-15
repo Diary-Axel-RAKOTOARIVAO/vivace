@@ -5,7 +5,7 @@ Compose animations directly in your HTML — no keyframes to write, no wrapper
 components, works in plain HTML, React, Svelte, Vue, anything that renders DOM.
 
 ```html
-<div data-viv="@fd|@sl-y|_ease-out-back" data-viv-on="appearing">
+<div data-viv="@fd @sl-y_ease-out-back" data-viv-on="appearing">
   Fades and slides up when scrolled into view.
 </div>
 ```
@@ -29,10 +29,12 @@ later by your framework — is picked up automatically.
 ## The grammar
 
 `data-viv` holds a composition of **keys** (animations, prefixed `@`) and
-**modifiers** (tuning, prefixed `_`), joined with `|`:
+**modifiers** (tuning, prefixed `_`). Modifiers concatenate straight onto
+their key (the `_` delimits them); separate keys are space-separated —
+`"@fd @sl-y_ease-out-back"`:
 
 ```html
-<button data-viv="@pop|_ease-out-back" data-viv-on="click">Pop!</button>
+<button data-viv="@pop_ease-out-back" data-viv-on="click">Pop!</button>
 ```
 
 ### Keys
@@ -54,7 +56,7 @@ later by your framework — is picked up automatically.
 | `@pop` | Pop | elastic scale-in punch — *new in Vivace* |
 | `@dr` | Drop | fall in and bounce on landing, `!` rise — *new in Vivace* |
 
-Keys compose: `@fd|@sl-y` fades while sliding. `@bn|@sl-x` slides in with a
+Keys compose: `@fd @sl-y` fades while sliding. `@bn @sl-x` slides in with a
 bounce landing.
 
 ### Modifiers
@@ -147,5 +149,5 @@ snap — content is never hidden from users who opt out of motion.
 
 ## Docs & playground
 
-Full documentation and the interactive node-based composer live in the
+Full documentation and the interactive composer live in the
 [docs app](../../apps/docs) — `bun run docs:dev` from the repo root.

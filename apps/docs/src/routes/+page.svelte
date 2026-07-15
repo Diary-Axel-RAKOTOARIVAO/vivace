@@ -27,15 +27,15 @@
 			</p>
 			<h1
 				class="text-4xl font-extrabold tracking-tight text-balance md:text-5xl"
-				data-viv="@fd|@sl-y|_ease-out-expo"
+				data-viv="@fd @sl-y_ease-out-expo"
 			>
 				Animate with attributes. Nothing else.
 			</h1>
-			<p class="mt-4 max-w-xl text-lg text-base-content/70" data-viv="@fd|_delay-2">
+			<p class="mt-4 max-w-xl text-lg text-base-content/70" data-viv="@fd_delay-2">
 				Compose entrances, springs and staggers directly in your markup. A tiny engine handles
 				<em>when</em> — scroll, hover, click, focus — and pure CSS handles <em>how</em>.
 			</p>
-			<div class="mt-7 flex gap-3" data-viv="@fd|_delay-3">
+			<div class="mt-7 flex gap-3" data-viv="@fd_delay-3">
 				<a href="/playground" class="btn btn-primary">
 					<iconify-icon icon="lucide:play" width="16"></iconify-icon>
 					Open playground
@@ -48,7 +48,7 @@
 			<pre class="!m-0 !border-0 !bg-transparent !p-0 text-[13px]"><code
 					>&lt;div
   <span class="text-secondary">data-viv</span>=<span class="token"
-						>"@fd|@sl-y|_ease-out-back"</span
+						>"@fd @sl-y_ease-out-back"</span
 					>
   <span class="text-secondary">data-viv-on</span>=<span class="token">"appearing"</span>
 &gt;</code></pre>
@@ -56,7 +56,7 @@
 				class="mt-4 flex h-28 items-center justify-center rounded-field border border-dashed border-base-300 bg-base-100"
 			>
 				<div
-					data-viv="@fd|@sl-y|_ease-out-back"
+					data-viv="@fd @sl-y_ease-out-back"
 					data-viv-on="appearing"
 					class="flex h-14 w-14 items-center justify-center rounded-field bg-primary font-bold text-primary-content"
 				>
@@ -123,7 +123,7 @@
 	<!-- CTA -->
 	<section
 		class="my-6 flex flex-col items-center gap-4 rounded-box bg-base-200 px-6 py-12 text-center"
-		data-viv="@fd|@sl-y"
+		data-viv="@fd @sl-y"
 		data-viv-on="appearing"
 	>
 		<h2 class="text-2xl font-extrabold tracking-tight">Compose one in ten seconds</h2>

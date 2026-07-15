@@ -61,9 +61,10 @@
 	}
 
 	async function share() {
+		// The URL carries the raw chain ('|'-joined), not the display format.
 		const url = new URL(window.location.href);
 		url.search = '';
-		url.searchParams.set('c', composition.viv);
+		url.searchParams.set('c', playground.items.map((i) => i.token).join('|'));
 		if (composition.on !== 'load') url.searchParams.set('on', composition.on);
 		await navigator.clipboard.writeText(url.toString());
 		shared = true;
@@ -86,12 +87,11 @@
 		<!-- LEFT: the actual <div> -->
 		<section class="min-w-0">
 			<code class="block overflow-x-auto bg-transparent p-0 text-[13px] whitespace-nowrap">
-				<span class="text-base-content/40">&lt;div </span>data-viv=<span class="token"
+				<span class="text-base-content/40">&lt;div&nbsp;</span>data-viv=<span class="token"
 					>"{composition.viv}"</span
-				>{#if composition.on !== 'load'}
-					data-viv-on=<span class="token">"{composition.on}"</span>{/if}<span
-					class="text-base-content/40">&gt;</span
-				>
+				>{#if composition.on !== 'load'}&nbsp;data-viv-on=<span class="token"
+						>"{composition.on}"</span
+					>{/if}<span class="text-base-content/40">&gt;</span>
 			</code>
 
 			<div
