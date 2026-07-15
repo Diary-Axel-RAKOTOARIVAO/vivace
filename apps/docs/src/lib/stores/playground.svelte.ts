@@ -39,6 +39,21 @@ class PlaygroundStore {
 		this.items = tokens.map((token) => ({ id: nextItemId++, token }));
 	}
 
+	/** Target widget: animate children (adds _child) or the element itself. */
+	setChildMode(on: boolean) {
+		if (on) {
+			if (!this.items.some((i) => i.token.startsWith('_child'))) this.add('_child-ascend');
+		} else {
+			this.items = this.items.filter((i) => !i.token.startsWith('_child'));
+		}
+	}
+
+	/** Origin widget: swap the _origin-* token; null resets to center. */
+	setOrigin(token: string | null) {
+		this.items = this.items.filter((i) => !i.token.startsWith('_origin'));
+		if (token) this.add(token);
+	}
+
 	addExperiment(viv: string, on: VivTrigger) {
 		this.experiments.push({ id: nextExperimentId++, viv, on, playing: true });
 	}
