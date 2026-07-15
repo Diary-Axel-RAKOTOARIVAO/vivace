@@ -3,9 +3,11 @@
 	import Vivace, { MODIFIERS, PRESETS, TRIGGER_OPTIONS, TRIGGERS, type VivTrigger } from 'vivace';
 
 	import PreviewRow from '$lib/components/PreviewRow.svelte';
+	import Subject from '$lib/components/Subject.svelte';
 	import { playground } from '$lib/stores/playground.svelte';
 	import { compose, toSnippet } from '$lib/compose';
 	import { EXAMPLES } from '$lib/examples';
+	import { SUBJECTS } from '$lib/subjects';
 
 	// Shared URLs (?c=@fd @sl-y_ease-out-back&on=appearing) seed the composer.
 	onMount(() => {
@@ -45,6 +47,10 @@
 	];
 
 	let childCount = $state(3);
+
+	// Preview subject: a mock page section the composition applies to.
+	let template = $state('card');
+	const subject = $derived(SUBJECTS.find((s) => s.id === template) ?? SUBJECTS[0]);
 
 	let stage: HTMLElement;
 
@@ -98,37 +104,34 @@
 				>{'\n'}<span class="text-base-content/40">&lt;/div&gt;</span></code>
 		</div>
 
+		<!-- subject picker, floating top-right rail -->
+		<div
+			class="absolute top-4 right-4 z-10 flex flex-col gap-0.5 rounded-box border border-base-300 bg-base-100/95 p-1 shadow-sm"
+			role="group"
+			aria-label="Preview subject"
+		>
+			{#each SUBJECTS as s (s.id)}
+				<button
+					class="btn btn-square btn-sm {template === s.id ? 'btn-neutral' : 'btn-ghost'}"
+					title={s.name}
+					aria-label={s.name}
+					aria-pressed={template === s.id}
+					onclick={() => (template = s.id)}
+				>
+					<iconify-icon icon={s.icon} width="16"></iconify-icon>
+				</button>
+			{/each}
+		</div>
+
 		<!-- stage -->
 		<div class="flex h-full items-center justify-center p-10" bind:this={stage}>
-			{#key snippet + childMode + childCount}
-				{#if childMode}
-					<div
-						data-viv={composition.viv}
-						data-viv-on={composition.on}
-						class="flex flex-wrap justify-center gap-1.5"
-					>
-						{#each Array(childCount), i (i)}
-							<div
-								class="flex h-20 w-24 items-center justify-center rounded-field border border-base-300 bg-base-100 text-lg font-bold shadow-sm"
-							>
-								V
-							</div>
-						{/each}
-					</div>
-				{:else}
-					<div
-						data-viv={composition.viv}
-						data-viv-on={composition.on}
-						class="flex h-24 w-28 items-center justify-center rounded-field border border-base-300 bg-base-100 text-xl font-bold shadow-sm"
-					>
-						V
-					</div>
-				{/if}
+			{#key snippet + template + childCount}
+				<Subject {template} viv={composition.viv} on={composition.on} count={childCount} />
 			{/key}
 		</div>
 
-		<!-- child count, floating bottom-left -->
-		{#if childMode}
+		<!-- child count, floating bottom-left (repeatable subjects only) -->
+		{#if subject.repeat}
 			<div
 				class="absolute bottom-4 left-4 z-10 flex items-center gap-1.5 rounded-box border border-base-300 bg-base-100/95 p-1.5 shadow-sm"
 			>
