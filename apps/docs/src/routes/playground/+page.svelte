@@ -50,7 +50,13 @@
 
 	// Preview subject: a mock page section the composition applies to.
 	let template = $state('card');
+	let variant = $state('vertical');
 	const subject = $derived(SUBJECTS.find((s) => s.id === template) ?? SUBJECTS[0]);
+
+	function pickSubject(id: string) {
+		template = id;
+		variant = SUBJECTS.find((s) => s.id === id)?.variants?.[0]?.id ?? '';
+	}
 
 	let stage: HTMLElement;
 
@@ -116,7 +122,7 @@
 					title={s.name}
 					aria-label={s.name}
 					aria-pressed={template === s.id}
-					onclick={() => (template = s.id)}
+					onclick={() => pickSubject(s.id)}
 				>
 					<iconify-icon icon={s.icon} width="16"></iconify-icon>
 				</button>
@@ -125,28 +131,49 @@
 
 		<!-- stage -->
 		<div class="flex h-full items-center justify-center p-10" bind:this={stage}>
-			{#key snippet + template + childCount}
-				<Subject {template} viv={composition.viv} on={composition.on} count={childCount} />
+			{#key snippet + template + variant + childCount}
+				<Subject
+					{template}
+					{variant}
+					viv={composition.viv}
+					on={composition.on}
+					count={childCount}
+				/>
 			{/key}
 		</div>
 
-		<!-- child count, floating bottom-left (repeatable subjects only) -->
-		{#if subject.repeat}
+		<!-- subject options, floating bottom-left: layout variants / child count -->
+		{#if subject.variants || subject.repeat}
 			<div
-				class="absolute bottom-4 left-4 z-10 flex items-center gap-1.5 rounded-box border border-base-300 bg-base-100/95 p-1.5 shadow-sm"
+				class="absolute bottom-4 left-4 z-10 flex items-center gap-1 rounded-box border border-base-300 bg-base-100/95 p-1.5 shadow-sm"
 			>
-				<iconify-icon icon="lucide:layout-grid" width="14" class="ml-1 text-base-content/40"
-				></iconify-icon>
-				{#each [2, 3, 4, 6] as n (n)}
-					<button
-						class="btn btn-square btn-xs font-mono {childCount === n
-							? 'btn-neutral'
-							: 'btn-ghost'}"
-						onclick={() => (childCount = n)}
-					>
-						{n}
-					</button>
-				{/each}
+				{#if subject.variants}
+					{#each subject.variants as v (v.id)}
+						<button
+							class="btn btn-square btn-xs {variant === v.id ? 'btn-neutral' : 'btn-ghost'}"
+							title={v.name}
+							aria-label={v.name}
+							aria-pressed={variant === v.id}
+							onclick={() => (variant = v.id)}
+						>
+							<iconify-icon icon={v.icon} width="14"></iconify-icon>
+						</button>
+					{/each}
+				{/if}
+				{#if subject.repeat}
+					<iconify-icon icon="lucide:layout-grid" width="14" class="ml-1 text-base-content/40"
+					></iconify-icon>
+					{#each [2, 3, 4, 6] as n (n)}
+						<button
+							class="btn btn-square btn-xs font-mono {childCount === n
+								? 'btn-neutral'
+								: 'btn-ghost'}"
+							onclick={() => (childCount = n)}
+						>
+							{n}
+						</button>
+					{/each}
+				{/if}
 			</div>
 		{/if}
 

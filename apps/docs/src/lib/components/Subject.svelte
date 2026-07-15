@@ -3,29 +3,64 @@
 
 	let {
 		template,
+		variant = '',
 		viv,
 		on,
 		count = 3
-	}: { template: string; viv: string; on: VivTrigger; count?: number } = $props();
+	}: { template: string; variant?: string; viv: string; on: VivTrigger; count?: number } =
+		$props();
 </script>
 
-{#if template === 'hero'}
-	<div
-		data-viv={viv}
-		data-viv-on={on}
-		class="flex w-full max-w-xl flex-col items-center gap-3.5 rounded-box border border-base-300 bg-base-100 p-10 text-center shadow-sm"
-	>
-		<span class="badge badge-accent badge-sm font-semibold">new season</span>
-		<h1 class="text-3xl font-extrabold tracking-tight">Music, in motion</h1>
-		<p class="max-w-sm text-sm text-base-content/60">
-			Compose entrances, springs and staggers straight in your markup — the engine handles the
-			rest.
-		</p>
-		<div class="flex gap-2">
-			<button class="btn btn-primary btn-sm">Get started</button>
-			<button class="btn btn-ghost btn-sm border-base-300">Live demo</button>
-		</div>
+{#snippet heroText(align: string)}
+	<span class="badge badge-accent badge-sm font-semibold">new season</span>
+	<h1 class="text-3xl font-extrabold tracking-tight">Music, in motion</h1>
+	<p class="max-w-sm text-sm text-base-content/60 {align === 'center' ? '' : 'text-left'}">
+		Compose entrances, springs and staggers straight in your markup — the engine handles the rest.
+	</p>
+	<div class="flex gap-2">
+		<button class="btn btn-primary btn-sm">Get started</button>
+		<button class="btn btn-ghost btn-sm border-base-300">Live demo</button>
 	</div>
+{/snippet}
+
+{#snippet heroMedia()}
+	<div class="grid h-40 w-52 shrink-0 place-items-center rounded-box bg-base-300">
+		<iconify-icon icon="lucide:play-circle" width="32" class="text-base-content/35"></iconify-icon>
+	</div>
+{/snippet}
+
+{#if template === 'hero'}
+	{#if variant === 'split-l'}
+		<div
+			data-viv={viv}
+			data-viv-on={on}
+			class="flex w-full max-w-2xl items-center gap-8 rounded-box border border-base-300 bg-base-100 p-8 shadow-sm"
+		>
+			<div class="flex flex-1 flex-col items-start gap-3.5">
+				{@render heroText('left')}
+			</div>
+			{@render heroMedia()}
+		</div>
+	{:else if variant === 'split-r'}
+		<div
+			data-viv={viv}
+			data-viv-on={on}
+			class="flex w-full max-w-2xl items-center gap-8 rounded-box border border-base-300 bg-base-100 p-8 shadow-sm"
+		>
+			{@render heroMedia()}
+			<div class="flex flex-1 flex-col items-start gap-3.5">
+				{@render heroText('left')}
+			</div>
+		</div>
+	{:else}
+		<div
+			data-viv={viv}
+			data-viv-on={on}
+			class="flex w-full max-w-xl flex-col items-center gap-3.5 rounded-box border border-base-300 bg-base-100 p-10 text-center shadow-sm"
+		>
+			{@render heroText('center')}
+		</div>
+	{/if}
 {:else if template === 'list'}
 	<ul
 		data-viv={viv}
@@ -34,7 +69,9 @@
 	>
 		{#each Array(count), i (i)}
 			<li class="flex items-center gap-3 p-3">
-				<span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-base-300 text-xs font-bold">
+				<span
+					class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-base-300 text-xs font-bold"
+				>
 					{String.fromCharCode(65 + i)}
 				</span>
 				<span class="flex-1">
@@ -55,7 +92,10 @@
 				</div>
 				<div class="mt-1 text-2xl font-extrabold">{[128, 172, 3, '12k', 47, 19][i % 6]}</div>
 				<div class="mt-1 h-1.5 w-full rounded bg-base-200">
-					<div class="h-1.5 rounded bg-accent" style="width: {[70, 85, 30, 60, 45, 75][i % 6]}%"></div>
+					<div
+						class="h-1.5 rounded bg-accent"
+						style="width: {[70, 85, 30, 60, 45, 75][i % 6]}%"
+					></div>
 				</div>
 			</div>
 		{/each}
@@ -89,8 +129,23 @@
 			<iconify-icon icon="lucide:x" width="13"></iconify-icon>
 		</button>
 	</div>
+{:else if template === 'card' && variant === 'horizontal'}
+	<div
+		data-viv={viv}
+		data-viv-on={on}
+		class="card card-side w-96 border border-base-300 bg-base-100 shadow-sm"
+	>
+		<figure class="grid w-32 shrink-0 place-items-center bg-base-300">
+			<iconify-icon icon="lucide:image" width="26" class="text-base-content/35"></iconify-icon>
+		</figure>
+		<div class="card-body gap-1.5 p-4">
+			<h3 class="card-title text-sm">Concert night</h3>
+			<p class="text-xs text-base-content/60">Live strings, Friday 21:00. Doors open at 20:15.</p>
+			<button class="btn btn-primary btn-xs mt-1 w-fit">Tickets</button>
+		</div>
+	</div>
 {:else}
-	<!-- card (default) -->
+	<!-- card, image on top (default) -->
 	<div
 		data-viv={viv}
 		data-viv-on={on}
