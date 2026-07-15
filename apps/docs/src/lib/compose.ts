@@ -1,35 +1,47 @@
 import type { VivTrigger } from 'vivace';
-import type { ChainItem } from './stores/playground.svelte';
+import type { Group } from './stores/playground.svelte';
 
 export interface Composition {
 	viv: string;
 	on: VivTrigger;
-	/** True once the chain holds at least one animation key. */
+	/** True once at least one group has an @key. */
 	complete: boolean;
 }
 
 /**
- * Resolve the chain into a data-viv composition using the A.css-style
- * notation: each @key starts a group, _modifiers concatenate onto the
- * preceding key (the _ prefix delimits them), and groups are separated
- * by spaces — "@fd @sl-y_ease-out-back".
+ * Render the groups in the canonical notation: modifiers concatenate
+ * onto their key (the _ prefix delimits them), groups are separated by
+ * spaces — "@fd @sl-y_ease-out-back".
  */
-export function compose(items: ChainItem[], on: VivTrigger): Composition {
-	const groups: string[] = [];
-	for (const { token } of items) {
-		if (!token) continue;
-		if (token.startsWith('_') && groups.length > 0) {
-			groups[groups.length - 1] += token;
-		} else {
-			groups.push(token);
-		}
-	}
+export function compose(groups: Group[], on: VivTrigger): Composition {
+	const parts = groups
+		.filter((g) => g.key)
+		.map((g) => g.key + g.mods.map((m) => m.token).join(''));
 
 	return {
-		viv: groups.join(' '),
+		viv: parts.join(' '),
 		on,
-		complete: items.some((i) => i.token.startsWith('@'))
+		complete: parts.length > 0
 	};
+}
+
+/**
+ * Parse a canonical viv string back into groups. Keys never contain
+ * '_', and modifier tokens never contain a second '_', so splitting on
+ * lookahead-underscore recovers the tokens exactly.
+ */
+export function parseViv(viv: string): { key: string; mods: string[] }[] {
+	const groups: { key: string; mods: string[] }[] = [];
+	for (const part of viv.split(/\s+/).filter(Boolean)) {
+		const tokens = part.split(/(?=_)/);
+		if (tokens[0]?.startsWith('@')) {
+			groups.push({ key: tokens[0], mods: tokens.slice(1) });
+		} else if (groups.length > 0) {
+			// Modifier-only part: attach to the previous group.
+			groups[groups.length - 1]!.mods.push(...tokens);
+		}
+	}
+	return groups;
 }
 
 /** Render a composition as copy-pasteable HTML. */

@@ -7,25 +7,26 @@
 	import { compose, toSnippet } from '$lib/compose';
 	import { EXAMPLES } from '$lib/examples';
 
-	// Shared URLs (?c=@fd|@sl-y&on=appearing) seed the chain, A.css-style.
+	// Shared URLs (?c=@fd @sl-y_ease-out-back&on=appearing) seed the composer.
 	onMount(() => {
 		const params = new URLSearchParams(window.location.search);
 		const c = params.get('c');
 		if (!c) return;
 		const on = params.get('on');
 		playground.load(
-			c.split('|').filter(Boolean),
+			c,
 			on && (TRIGGERS as readonly string[]).includes(on) ? (on as VivTrigger) : 'load'
 		);
 	});
 
-	const composition = $derived(compose(playground.items, playground.triggerValue));
+	const composition = $derived(compose(playground.groups, playground.triggerValue));
 	const snippet = $derived(toSnippet(composition));
 
-	// Widgets read their state straight from the token chain.
-	const childMode = $derived(playground.items.some((i) => i.token.startsWith('_child')));
+	// Widgets read their state straight from the groups.
+	const childMode = $derived(playground.groups.some((g) => g.mods.some((m) => m.token.startsWith('_child'))));
 	const originToken = $derived(
-		playground.items.find((i) => i.token.startsWith('_origin'))?.token ?? null
+		playground.groups.flatMap((g) => g.mods).find((m) => m.token.startsWith('_origin'))?.token ??
+			null
 	);
 
 	// 3x3 origin picker; null = center = default (no token)
@@ -61,10 +62,9 @@
 	}
 
 	async function share() {
-		// The URL carries the raw chain ('|'-joined), not the display format.
 		const url = new URL(window.location.href);
 		url.search = '';
-		url.searchParams.set('c', playground.items.map((i) => i.token).join('|'));
+		url.searchParams.set('c', composition.viv);
 		if (composition.on !== 'load') url.searchParams.set('on', composition.on);
 		await navigator.clipboard.writeText(url.toString());
 		shared = true;
@@ -83,7 +83,7 @@
 <main class="mx-auto max-w-5xl px-5 py-12">
 	<h1 class="mb-8 text-2xl font-extrabold tracking-tight">Playground</h1>
 
-	<div class="grid items-start gap-10 md:grid-cols-[1fr_19rem]">
+	<div class="grid items-start gap-10 md:grid-cols-[1fr_20rem]">
 		<!-- LEFT: the actual <div> -->
 		<section class="min-w-0">
 			<code class="block overflow-x-auto bg-transparent p-0 text-[13px] whitespace-nowrap">
@@ -159,46 +159,77 @@
 				</select>
 			</label>
 
-			<!-- Token chain -->
-			<div class="flex flex-col gap-1.5">
-				{#each playground.items as item (item.id)}
-					<span class="flex items-center gap-1">
-						<button
-							class="btn btn-circle btn-ghost h-5 min-h-0 w-5 text-error"
-							aria-label="Remove token"
-							onclick={() => playground.remove(item.id)}
-						>
-							<iconify-icon icon="lucide:minus" width="13"></iconify-icon>
-						</button>
-						<select
-							bind:value={item.token}
-							class="select select-sm token grow bg-base-100 text-[13px]"
-							aria-label="Token"
-						>
-							<optgroup label="Animations">
+			<!-- Groups: one @key + its connected modifiers -->
+			<div class="flex flex-col gap-3">
+				{#each playground.groups as group (group.id)}
+					<div class="rounded-field border border-base-300 bg-base-100 p-2.5">
+						<div class="flex items-center gap-1">
+							<select
+								bind:value={group.key}
+								class="select select-sm token grow text-[13px]"
+								aria-label="Animation key"
+							>
 								{#each PRESETS as preset (preset.key)}
 									{#each preset.variants as v (v)}
 										<option value={v}>{v}</option>
 									{/each}
 								{/each}
-							</optgroup>
-							<optgroup label="Modifiers">
-								{#each MODIFIERS as mod (mod.key)}
-									{#each mod.variants as v (v)}
-										<option value={v}>{v}</option>
-									{/each}
+							</select>
+							{#if playground.groups.length > 1}
+								<button
+									class="btn btn-circle btn-ghost h-6 min-h-0 w-6 text-error"
+									aria-label="Remove group"
+									onclick={() => playground.removeGroup(group.id)}
+								>
+									<iconify-icon icon="lucide:x" width="13"></iconify-icon>
+								</button>
+							{/if}
+						</div>
+
+						{#if group.mods.length > 0}
+							<div class="mt-1.5 flex flex-col gap-1 border-l-2 border-base-300 pl-2">
+								{#each group.mods as mod (mod.id)}
+									<span class="flex items-center gap-1">
+										<button
+											class="btn btn-circle btn-ghost h-5 min-h-0 w-5 text-error"
+											aria-label="Remove modifier"
+											onclick={() => playground.removeMod(group.id, mod.id)}
+										>
+											<iconify-icon icon="lucide:minus" width="12"></iconify-icon>
+										</button>
+										<select
+											bind:value={mod.token}
+											class="select select-xs token grow text-xs"
+											aria-label="Modifier"
+										>
+											{#each MODIFIERS as m (m.key)}
+												{#each m.variants as v (v)}
+													<option value={v}>{v}</option>
+												{/each}
+											{/each}
+										</select>
+									</span>
 								{/each}
-							</optgroup>
-						</select>
-					</span>
+							</div>
+						{/if}
+
+						<button
+							class="btn btn-ghost btn-xs mt-1.5 gap-1 font-mono text-base-content/60"
+							onclick={() => playground.addMod(group.id)}
+						>
+							<iconify-icon icon="lucide:plus" width="12"></iconify-icon>
+							_modifier
+						</button>
+					</div>
 				{/each}
+
 				<button
-					class="btn btn-outline btn-sm mt-1 gap-1 border-base-300"
-					aria-label="Add token"
-					onclick={() => playground.add()}
+					class="btn btn-outline btn-sm gap-1.5 border-base-300 tracking-[0.15em]"
+					title="Mix in another animation key"
+					onclick={() => playground.addGroup()}
 				>
 					<iconify-icon icon="lucide:plus" width="14"></iconify-icon>
-					token
+					MIX
 				</button>
 			</div>
 
@@ -293,7 +324,7 @@
 		{#each EXAMPLES as example (example.name)}
 			<button
 				class="badge badge-lg cursor-pointer border-base-300 bg-base-100 font-mono text-xs hover:border-base-content/40"
-				onclick={() => playground.load(example.tokens, example.on)}
+				onclick={() => playground.load(example.viv, example.on)}
 			>
 				{example.name}
 			</button>
