@@ -23,9 +23,10 @@ import 'vivace/vivace.css'
 Vivace.init()`}</code></pre>
 
 <p>
-	<code>init()</code> scans the page for <code>[data-viv]</code> elements and keeps watching — anything
-	your framework mounts later is registered automatically via a MutationObserver. Call
-	<code>Vivace.destroy()</code> if you ever need to tear the engine down.
+	<code>init()</code> scans the page for <code>[data-viv]</code> elements and keeps watching —
+	anything your framework mounts later is registered automatically via a MutationObserver. Call
+	<code>Vivace.destroy()</code> if you ever need to tear the engine down. Framework-specific
+	wiring lives in the <a href="/docs/frameworks/html">Frameworks</a> section.
 </p>
 
 <h2>First animation</h2>
@@ -36,17 +37,21 @@ Vivace.init()`}</code></pre>
 
 <p>Live:</p>
 
-<div class="demo">
-	<div data-viv="@fd|@sl-y|_ease-out-back" data-viv-on="appearing" class="demo-box">
+<div
+	class="flex justify-center rounded-box border border-base-300 bg-base-200/50 p-8 not-prose"
+>
+	<div
+		data-viv="@fd|@sl-y|_ease-out-back"
+		data-viv-on="appearing"
+		class="rounded-field bg-primary px-6 py-3 font-semibold text-primary-content"
+	>
 		Fades in while sliding up
 	</div>
 </div>
 
 <h2>Migrating from A.css</h2>
 
-<p>
-	Vivace keeps A.css's key/modifier grammar and custom-property system, with three changes:
-</p>
+<p>Vivace keeps A.css's key/modifier grammar and custom-property system, with three changes:</p>
 
 <ul>
 	<li>The attribute is <code>data-viv</code> instead of <code>qwik-animate</code>.</li>
@@ -61,21 +66,3 @@ Vivace.init()`}</code></pre>
 </ul>
 
 <p>Continue with <a href="/docs/attributes">Attributes</a> for the full grammar.</p>
-
-<style>
-	.demo {
-		background: var(--bg-raised);
-		border: 1px solid var(--border);
-		border-radius: var(--radius);
-		padding: 2rem;
-		display: flex;
-		justify-content: center;
-	}
-
-	.demo-box {
-		background: var(--accent-grad);
-		border-radius: var(--radius);
-		padding: 1rem 2rem;
-		font-weight: 600;
-	}
-</style>

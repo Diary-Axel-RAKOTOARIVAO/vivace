@@ -7,29 +7,9 @@
 </script>
 
 <button
-	class="play-pause"
+	class="btn btn-square btn-sm border-base-300"
 	aria-label={playing ? 'Pause animation' : 'Play animation'}
 	onclick={() => (playing ? onpause() : onplay())}
 >
-	{playing ? '⏸' : '▶'}
+	<iconify-icon icon={playing ? 'lucide:pause' : 'lucide:play'} width="15"></iconify-icon>
 </button>
-
-<style>
-	.play-pause {
-		width: 40px;
-		height: 40px;
-		border-radius: 50%;
-		border: 1px solid var(--border);
-		background: var(--bg-card);
-		color: var(--text);
-		font-size: 0.9rem;
-		cursor: pointer;
-		display: grid;
-		place-items: center;
-		transition: border-color 0.15s ease;
-	}
-
-	.play-pause:hover {
-		border-color: var(--accent);
-	}
-</style>

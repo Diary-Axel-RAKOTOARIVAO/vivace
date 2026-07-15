@@ -1,154 +1,138 @@
 <script lang="ts">
-	const heroAttr = '@fd|@sl-y|_ease-out-expo';
+	import Vivace, { PRESETS } from 'vivace';
+
+	let hero: HTMLElement;
+
+	function replayHero() {
+		for (const el of hero.querySelectorAll<HTMLElement>('[data-viv]')) {
+			Vivace.trigger(el);
+		}
+	}
 </script>
 
 <svelte:head>
 	<title>Vivace — animate with attributes</title>
 	<meta
 		name="description"
-		content="Attribute-driven CSS animations with a tiny trigger engine. No keyframes, no wrappers."
+		content="Attribute-driven CSS animations with a tiny trigger engine. No keyframes, no wrapper components."
 	/>
 </svelte:head>
 
-<main>
-	<section class="hero">
-		<h1 data-viv="@bl|_speed-down" class="gradient-text">Vivace</h1>
-		<p class="tagline" data-viv="@fd|@sl-y|_ease-out-expo|_delay-3">
-			Animations you compose in HTML. A trigger engine you never think about.
-		</p>
-		<pre data-viv="@fd|@sl-y|_ease-out-expo|_delay-5"><code
-				>&lt;div data-viv="{heroAttr}" data-viv-on="appearing"&gt;</code
-			></pre>
-		<div class="cta" data-viv="@fd|_delay-6">
-			<a class="btn primary" href="/playground">Open the playground</a>
-			<a class="btn" href="/docs">Read the docs</a>
+<main class="mx-auto max-w-5xl px-5">
+	<!-- Hero -->
+	<section class="grid items-center gap-10 py-16 md:grid-cols-[1.2fr_1fr] md:py-24">
+		<div>
+			<p class="mb-3 font-mono text-sm text-accent" data-viv="@fd">
+				bun add vivace <span class="text-base-content/40">· 0 dependencies</span>
+			</p>
+			<h1
+				class="text-4xl font-extrabold tracking-tight text-balance md:text-5xl"
+				data-viv="@fd|@sl-y|_ease-out-expo"
+			>
+				Animate with attributes. Nothing else.
+			</h1>
+			<p class="mt-4 max-w-xl text-lg text-base-content/70" data-viv="@fd|_delay-2">
+				Compose entrances, springs and staggers directly in your markup. A tiny engine handles
+				<em>when</em> — scroll, hover, click, focus — and pure CSS handles <em>how</em>.
+			</p>
+			<div class="mt-7 flex gap-3" data-viv="@fd|_delay-3">
+				<a href="/playground" class="btn btn-primary">
+					<iconify-icon icon="lucide:play" width="16"></iconify-icon>
+					Open playground
+				</a>
+				<a href="/docs" class="btn btn-ghost border-base-300">Read the docs</a>
+			</div>
+		</div>
+
+		<div class="rounded-box border border-base-300 bg-base-200/50 p-5" bind:this={hero}>
+			<pre class="!m-0 !border-0 !bg-transparent !p-0 text-[13px]"><code
+					>&lt;div
+  <span class="text-secondary">data-viv</span>=<span class="token"
+						>"@fd|@sl-y|_ease-out-back"</span
+					>
+  <span class="text-secondary">data-viv-on</span>=<span class="token">"appearing"</span>
+&gt;</code></pre>
+			<div
+				class="mt-4 flex h-28 items-center justify-center rounded-field border border-dashed border-base-300 bg-base-100"
+			>
+				<div
+					data-viv="@fd|@sl-y|_ease-out-back"
+					data-viv-on="appearing"
+					class="flex h-14 w-14 items-center justify-center rounded-field bg-primary font-bold text-primary-content"
+				>
+					V
+				</div>
+			</div>
+			<button class="btn btn-ghost btn-xs mt-3 gap-1.5 text-base-content/60" onclick={replayHero}>
+				<iconify-icon icon="lucide:rotate-ccw" width="13"></iconify-icon>
+				replay
+			</button>
 		</div>
 	</section>
 
-	<section class="features" data-viv="@fd|@sl-y|_child-ascend" data-viv-on="appearing">
-		<article>
-			<h3>🎼 Declarative</h3>
-			<p>
-				Compose fades, springs, spirals and staggers straight in your markup:
-				<code>@fd|@sl-y|_ease-out-back</code>. No keyframes to write.
+	<!-- Keys strip -->
+	<section class="border-t border-base-300 py-12">
+		<div class="mb-5 flex items-baseline justify-between">
+			<h2 class="text-xl font-bold tracking-tight">Fourteen keys. Hover to feel them.</h2>
+			<a href="/docs/presets" class="text-sm underline underline-offset-4">full gallery</a>
+		</div>
+		<div class="flex flex-wrap gap-2">
+			{#each PRESETS as preset (preset.key)}
+				<span
+					data-viv={preset.variants[0]}
+					data-viv-on="hover"
+					class="badge badge-lg cursor-default border-base-300 bg-base-100 font-mono text-[13px]"
+				>
+					{preset.key}
+					<span class="text-base-content/45">{preset.name.toLowerCase()}</span>
+				</span>
+			{/each}
+		</div>
+	</section>
+
+	<!-- Why -->
+	<section class="grid gap-10 border-t border-base-300 py-12 md:grid-cols-3">
+		<div>
+			<iconify-icon icon="lucide:braces" width="22" class="text-accent"></iconify-icon>
+			<h3 class="mt-3 mb-1.5 font-bold">Declarative grammar</h3>
+			<p class="text-sm leading-relaxed text-base-content/70">
+				<code>@sl-y</code> slides up, <code>!</code> flips it, <code>_lv-up</code> pushes harder.
+				Tokens compose freely — no keyframes to write, ever.
 			</p>
-		</article>
-		<article>
-			<h3>⚡ Real triggers</h3>
-			<p>
+		</div>
+		<div>
+			<iconify-icon icon="lucide:mouse-pointer-click" width="22" class="text-accent"
+			></iconify-icon>
+			<h3 class="mt-3 mb-1.5 font-bold">Real triggers</h3>
+			<p class="text-sm leading-relaxed text-base-content/70">
 				<code>load</code>, <code>appearing</code>, <code>hover</code>, <code>click</code>,
-				<code>focus</code> — one shared IntersectionObserver, delegated listeners, zero per-element
+				<code>focus</code>. One shared IntersectionObserver, delegated listeners, zero per-element
 				overhead.
 			</p>
-		</article>
-		<article>
-			<h3>🪶 Tiny & framework-agnostic</h3>
-			<p>
-				Zero dependencies. Works in plain HTML, React, Svelte, Vue — dynamically mounted elements
-				register themselves.
+		</div>
+		<div>
+			<iconify-icon icon="lucide:feather" width="22" class="text-accent"></iconify-icon>
+			<h3 class="mt-3 mb-1.5 font-bold">Framework-agnostic</h3>
+			<p class="text-sm leading-relaxed text-base-content/70">
+				Plain HTML, React, Svelte, Vue — dynamically mounted elements register themselves. Zero
+				runtime dependencies.
 			</p>
-		</article>
+		</div>
 	</section>
 
-	<section class="demo-strip" data-viv="@fd" data-viv-on="appearing">
-		<h2>Fourteen keys, endless compositions</h2>
-		<div class="chips">
-			<span data-viv="@pop|_delay-1" data-viv-on="appearing">@pop</span>
-			<span data-viv="@dr|_delay-2" data-viv-on="appearing">@dr</span>
-			<span data-viv="@sw|_delay-3" data-viv-on="appearing">@sw</span>
-			<span data-viv="@bl|_delay-4" data-viv-on="appearing">@bl</span>
-			<span data-viv="@bn|_delay-5" data-viv-on="appearing">@bn</span>
-			<span data-viv="@sp-i|_delay-6" data-viv-on="appearing">@sp</span>
-		</div>
-		<p class="hint">Hover any chip to replay it — that's <code>data-viv-on="hover"</code> energy.</p>
+	<!-- CTA -->
+	<section
+		class="my-6 flex flex-col items-center gap-4 rounded-box bg-base-200 px-6 py-12 text-center"
+		data-viv="@fd|@sl-y"
+		data-viv-on="appearing"
+	>
+		<h2 class="text-2xl font-extrabold tracking-tight">Compose one in ten seconds</h2>
+		<p class="max-w-md text-base-content/70">
+			Chain tokens in the playground, watch it live, copy the attribute out.
+		</p>
+		<a href="/playground" class="btn btn-primary">
+			<iconify-icon icon="lucide:play" width="16"></iconify-icon>
+			Try the playground
+		</a>
 	</section>
 </main>
-
-<style>
-	main {
-		max-width: 960px;
-		margin: 0 auto;
-		padding: 0 1.5rem 6rem;
-	}
-
-	.hero {
-		text-align: center;
-		padding: 7rem 0 5rem;
-	}
-
-	.hero h1 {
-		font-size: clamp(3.5rem, 10vw, 6.5rem);
-		margin: 0;
-		letter-spacing: -0.04em;
-	}
-
-	.tagline {
-		font-size: 1.3rem;
-		color: var(--text-dim);
-		max-width: 34em;
-		margin: 1rem auto 2rem;
-	}
-
-	.hero pre {
-		display: inline-block;
-		text-align: left;
-		margin-bottom: 2rem;
-	}
-
-	.cta {
-		display: flex;
-		gap: 1rem;
-		justify-content: center;
-	}
-
-	.features {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-		gap: 1.25rem;
-		padding: 3rem 0;
-	}
-
-	.features article {
-		background: var(--bg-raised);
-		border: 1px solid var(--border);
-		border-radius: var(--radius);
-		padding: 1.5rem;
-	}
-
-	.features h3 {
-		margin-top: 0;
-	}
-
-	.features p {
-		color: var(--text-dim);
-		margin-bottom: 0;
-	}
-
-	.demo-strip {
-		text-align: center;
-		padding: 4rem 0 2rem;
-	}
-
-	.chips {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.75rem;
-		justify-content: center;
-		margin: 2rem 0 1rem;
-	}
-
-	.chips span {
-		display: inline-block;
-		padding: 0.6rem 1.2rem;
-		border-radius: 999px;
-		background: var(--bg-card);
-		border: 1px solid var(--border);
-		font-family: var(--mono);
-		color: var(--accent-2);
-	}
-
-	.hint {
-		color: var(--text-dim);
-		font-size: 0.9rem;
-	}
-</style>

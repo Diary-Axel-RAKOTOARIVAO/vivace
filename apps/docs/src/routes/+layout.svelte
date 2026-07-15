@@ -7,6 +7,8 @@
 	let { children } = $props();
 
 	$effect(() => {
+		// Client-only: registers the <iconify-icon> web component.
+		import('iconify-icon');
 		Vivace.init();
 		return () => Vivace.destroy();
 	});
@@ -16,52 +18,34 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<nav>
-	<a href="/" class="brand gradient-text">Vivace</a>
-	<div class="links">
-		<a href="/docs">Docs</a>
-		<a href="/playground">Playground</a>
-	</div>
-</nav>
+<div class="min-h-screen bg-base-100 text-base-content">
+	<header class="border-b border-base-300 sticky top-0 z-50 bg-base-100/90 backdrop-blur">
+		<nav class="mx-auto flex h-14 max-w-5xl items-center justify-between px-5">
+			<a href="/" class="text-lg font-extrabold tracking-tight">
+				vivace<span class="text-accent">.</span>
+			</a>
+			<div class="flex items-center gap-1">
+				<a href="/docs" class="btn btn-ghost btn-sm font-medium">Docs</a>
+				<a href="/playground" class="btn btn-ghost btn-sm font-medium">Playground</a>
+				<a
+					href="https://github.com/aureon-it/vivace"
+					class="btn btn-ghost btn-sm btn-square"
+					aria-label="GitHub"
+				>
+					<iconify-icon icon="simple-icons:github" width="18"></iconify-icon>
+				</a>
+			</div>
+		</nav>
+	</header>
 
-{@render children()}
+	{@render children()}
 
-<style>
-	nav {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 0.9rem 2rem;
-		border-bottom: 1px solid var(--border);
-		position: sticky;
-		top: 0;
-		background: color-mix(in srgb, var(--bg) 85%, transparent);
-		backdrop-filter: blur(12px);
-		z-index: 50;
-	}
-
-	.brand {
-		font-size: 1.35rem;
-		font-weight: 800;
-		letter-spacing: -0.02em;
-	}
-
-	.brand:hover {
-		text-decoration: none;
-	}
-
-	.links {
-		display: flex;
-		gap: 1.5rem;
-	}
-
-	.links a {
-		color: var(--text-dim);
-		font-weight: 500;
-	}
-
-	.links a:hover {
-		color: var(--text);
-		text-decoration: none;
-	}
-</style>
+	<footer class="border-t border-base-300 mt-16">
+		<div
+			class="mx-auto flex max-w-5xl items-center justify-between px-5 py-6 text-sm text-base-content/60"
+		>
+			<span>MIT — keyframe DSL inspired by A.css</span>
+			<span class="font-mono text-xs">bun add vivace</span>
+		</div>
+	</footer>
+</div>
