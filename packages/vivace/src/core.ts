@@ -1,15 +1,18 @@
+import { getCustomTrigger, hasCustomTrigger } from './plugin'
 import {
+  ATTR,
   ATTR_DELAY,
   ATTR_DURATION,
   ATTR_EASE,
   ATTR_ON,
+  ATTR_OUT,
   ATTR_PAUSED,
   ATTR_REPEAT,
   ATTR_REPEAT_SCROLL,
   ATTR_STATE,
   TRIGGERS,
+  type VivEvent,
   type VivRecord,
-  type VivTrigger,
 } from './types'
 
 /**
@@ -66,12 +69,19 @@ function applyModifiers(el: HTMLElement): void {
   if (repeat !== null) el.style.setProperty('--AC', repeat)
 }
 
-export function parseTrigger(el: HTMLElement): VivTrigger {
+export function parseTrigger(el: HTMLElement): VivRecord['trigger'] {
   const raw = el.getAttribute(ATTR_ON)
-  return raw !== null && (TRIGGERS as readonly string[]).includes(raw)
-    ? (raw as VivTrigger)
-    : 'load'
+  if (raw === null) return 'load'
+  if ((TRIGGERS as readonly string[]).includes(raw) || hasCustomTrigger(raw)) return raw
+  return 'load'
 }
+
+export function emit(el: HTMLElement, type: VivEvent): void {
+  el.dispatchEvent(new CustomEvent(type, { bubbles: true }))
+}
+
+/** Teardowns for custom-trigger elements, drained on destroy(). */
+export const customTeardowns = new Set<() => void>()
 
 /**
  * Arm one element: read its trigger, apply modifiers, and put entrance
@@ -88,7 +98,11 @@ export function register(el: HTMLElement): VivRecord | null {
   registry.set(el, record)
   applyModifiers(el)
 
-  if (record.trigger === 'appearing') {
+  const custom = getCustomTrigger(record.trigger)
+  if (custom) {
+    const teardown = custom(el, () => trigger(el))
+    if (teardown) customTeardowns.add(teardown)
+  } else if (record.trigger === 'appearing') {
     setState(el, 'idle')
   } else if (record.trigger === 'load') {
     trigger(el)
@@ -111,6 +125,35 @@ export function trigger(el: HTMLElement): void {
     void el.offsetWidth
   }
   setState(el, 'play')
+  emit(el, 'vivace:play')
+}
+
+/**
+ * Play the exit composition and resolve when it finishes. The exit
+ * tokens come from `data-viv-out` (default '@fd-o'); fill-mode keeps
+ * the element in its hidden end state, so removing it after the
+ * promise resolves never flashes.
+ */
+export function out(el: HTMLElement): Promise<void> {
+  const exit = el.getAttribute(ATTR_OUT) ?? '@fd-o'
+  el.setAttribute(ATTR, exit)
+  trigger(el)
+  emit(el, 'vivace:out')
+
+  return new Promise((resolve) => {
+    // Let the style recalc start the animations, then await them all —
+    // covers _child staggers too. No getAnimations (test DOMs, ancient
+    // browsers) => resolve immediately rather than hang. 'vivace:end'
+    // is emitted by the delegated animationend listener.
+    requestAnimationFrame(() => {
+      const anims = el.getAnimations?.({ subtree: true }) ?? []
+      if (anims.length === 0) {
+        resolve()
+        return
+      }
+      Promise.allSettled(anims.map((a) => a.finished)).then(() => resolve())
+    })
+  })
 }
 
 export function pause(el: HTMLElement): void {

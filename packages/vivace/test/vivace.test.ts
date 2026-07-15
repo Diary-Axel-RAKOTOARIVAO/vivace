@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test } from 'bun:test'
 import { parseSeconds, resolveEase } from '../src/core'
 import Vivace, { ATTR_PAUSED, ATTR_STATE } from '../src/index'
+import { resetKeys } from '../src/plugin'
 import { ioInstances } from './setup'
 
 function mount(html: string): HTMLElement {
@@ -138,6 +139,70 @@ describe('public API', () => {
     Vivace.destroy()
     el.dispatchEvent(new MouseEvent('click', { bubbles: true }))
     expect(el.hasAttribute(ATTR_STATE)).toBe(false)
+  })
+})
+
+describe('exit animations', () => {
+  test('out() swaps in the data-viv-out composition and resolves', async () => {
+    const el = mount('<div data-viv="@fd" data-viv-out="@fd-o @sl-y-o"></div>')
+    Vivace.init()
+    await Vivace.out(el)
+    expect(el.getAttribute('data-viv')).toBe('@fd-o @sl-y-o')
+    expect(el.getAttribute(ATTR_STATE)).toBe('play')
+  })
+
+  test('out() defaults to @fd-o without data-viv-out', async () => {
+    const el = mount('<div data-viv="@pop"></div>')
+    Vivace.init()
+    await Vivace.out(el)
+    expect(el.getAttribute('data-viv')).toBe('@fd-o')
+  })
+
+  test('trigger emits a bubbling vivace:play event', () => {
+    const el = mount('<div data-viv="@fd" data-viv-on="click"></div>')
+    Vivace.init()
+    let seen = 0
+    document.addEventListener('vivace:play', () => {
+      seen += 1
+    })
+    Vivace.trigger(el)
+    expect(seen).toBe(1)
+  })
+})
+
+describe('plugins', () => {
+  test('defineKey injects a rule filling the shared slots', () => {
+    Vivace.defineKey('@wb', {
+      keyframe: 10,
+      duration: 0.9,
+      vars: { '--ARZ1': '8deg', '--ARZ3': '-6deg' },
+    })
+    const style = document.head.querySelector('style[data-vivace-plugins]')
+    expect(style?.textContent).toContain('[data-viv*="@wb"]')
+    expect(style?.textContent).toContain('--AN:viv-10')
+    expect(style?.textContent).toContain('--AD:0.9')
+    expect(style?.textContent).toContain('--ARZ1:8deg')
+    resetKeys()
+  })
+
+  test('defineTrigger arms elements and its teardown runs on destroy', () => {
+    let armed: HTMLElement | null = null
+    let toreDown = false
+    Vivace.defineTrigger('manual', (el, fire) => {
+      armed = el
+      el.addEventListener('custom-go', fire)
+      return () => {
+        toreDown = true
+      }
+    })
+    const el = mount('<div data-viv="@fd" data-viv-on="manual"></div>')
+    Vivace.init()
+    expect(armed).toBe(el)
+    expect(el.hasAttribute(ATTR_STATE)).toBe(false)
+    el.dispatchEvent(new Event('custom-go'))
+    expect(el.getAttribute(ATTR_STATE)).toBe('play')
+    Vivace.destroy()
+    expect(toreDown).toBe(true)
   })
 })
 

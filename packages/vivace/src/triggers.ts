@@ -1,4 +1,4 @@
-import { registry, trigger } from './core'
+import { emit, registry, trigger } from './core'
 import { ATTR, type VivTrigger } from './types'
 
 /**
@@ -28,6 +28,14 @@ function delegatedHandler(kind: VivTrigger): (event: Event) => void {
   }
 }
 
+/** Surface animation completion as a bubbling vivace:end event. */
+function endHandler(event: Event): void {
+  const target = event.target
+  if (!(target instanceof Element)) return
+  const el = target.closest<HTMLElement>(`[${ATTR}]`)
+  if (el && registry.has(el)) emit(el, 'vivace:end')
+}
+
 let teardown: Teardown | null = null
 
 export function installListeners(doc: Document): void {
@@ -39,11 +47,13 @@ export function installListeners(doc: Document): void {
   doc.addEventListener('pointerenter', hoverHandler, true)
   doc.addEventListener('click', onClick)
   doc.addEventListener('focusin', onFocus)
+  doc.addEventListener('animationend', endHandler)
 
   teardown = () => {
     doc.removeEventListener('pointerenter', hoverHandler, true)
     doc.removeEventListener('click', onClick)
     doc.removeEventListener('focusin', onFocus)
+    doc.removeEventListener('animationend', endHandler)
   }
 }
 

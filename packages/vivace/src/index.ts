@@ -1,12 +1,22 @@
-import { pause, play, trigger } from './core'
+import { customTeardowns, out, pause, play, trigger } from './core'
 import { disconnectObservers, registerElement, scan, watchMutations } from './observer'
+import { defineKey, defineTrigger } from './plugin'
 import { installListeners, removeListeners } from './triggers'
-import type { VivaceAPI } from './types'
+import type { VivKeyDefinition, VivTriggerSetup, VivaceAPI } from './types'
 
-export type { VivTrigger, VivState, VivRecord, VivaceAPI } from './types'
+export type {
+  VivTrigger,
+  VivState,
+  VivRecord,
+  VivaceAPI,
+  VivKeyDefinition,
+  VivTriggerSetup,
+  VivEvent,
+} from './types'
 export {
   ATTR,
   ATTR_ON,
+  ATTR_OUT,
   ATTR_STATE,
   ATTR_PAUSED,
   ATTR_REPEAT_SCROLL,
@@ -31,7 +41,7 @@ let initialized = false
  *   Vivace.init()
  *
  * Everything else happens in HTML:
- *   <div data-viv="@fd|@sl-y|_ease-out-back" data-viv-on="appearing">
+ *   <div data-viv="@fd @sl-y_ease-out-back" data-viv-on="appearing">
  */
 export const Vivace: VivaceAPI = {
   init(root?: HTMLElement): void {
@@ -55,10 +65,24 @@ export const Vivace: VivaceAPI = {
     if (canRun) trigger(el)
   },
 
+  out(el: HTMLElement): Promise<void> {
+    return canRun ? out(el) : Promise.resolve()
+  },
+
+  defineKey(token: string, def: VivKeyDefinition): void {
+    if (canRun) defineKey(token, def)
+  },
+
+  defineTrigger(name: string, setup: VivTriggerSetup): void {
+    defineTrigger(name, setup)
+  },
+
   destroy(): void {
     if (!initialized) return
     removeListeners()
     disconnectObservers()
+    for (const teardown of customTeardowns) teardown()
+    customTeardowns.clear()
     initialized = false
   },
 }
