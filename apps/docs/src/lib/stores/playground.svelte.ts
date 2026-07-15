@@ -34,6 +34,9 @@ class PlaygroundStore {
 	nodeConfig = $state<Record<string, NodeConfig>>({});
 	experiments = $state<Experiment[]>([]);
 
+	/** The trigger node's selection — lives here so load() can drive it. */
+	triggerValue = $state<VivTrigger>('appearing');
+
 	/** Node ids in composition order, trigger first. */
 	chain = $state<string[]>([TRIGGER_ID]);
 
@@ -69,6 +72,20 @@ class PlaygroundStore {
 		];
 		this.chain.push(id);
 		this.rebuildEdges();
+	}
+
+	/** Replace the whole chain with a composition (examples, shared URLs). */
+	load(tokens: string[], on: VivTrigger) {
+		this.triggerValue = on;
+		this.chain = [TRIGGER_ID];
+		this.nodes = [
+			{ id: TRIGGER_ID, type: 'trigger', position: { x: 0, y: 80 }, data: {}, deletable: false },
+			{ id: PLUS_ID, type: 'add', position: { x: SPACING, y: 96 }, data: {}, deletable: false }
+		];
+		this.rebuildEdges();
+		for (const token of tokens) {
+			this.append(token.startsWith('_') ? 'modifier' : 'animation', token);
+		}
 	}
 
 	/** Remove a chain node; the chain heals around it. */

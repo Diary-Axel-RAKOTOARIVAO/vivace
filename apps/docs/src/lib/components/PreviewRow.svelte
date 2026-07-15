@@ -26,7 +26,15 @@
 
 <div class="row">
 	<div class="stage">
-		<div bind:this={subject} data-viv={experiment.viv} data-viv-on={experiment.on} class="subject"></div>
+		<div
+			bind:this={subject}
+			data-viv={experiment.viv}
+			data-viv-on={experiment.on}
+			class="subject"
+			class:as-parent={experiment.viv.includes('_child')}
+		>
+			{#if experiment.viv.includes('_child')}<i></i><i></i><i></i>{/if}
+		</div>
 	</div>
 	<code class="attr">data-viv="{experiment.viv}"{experiment.on !== 'load' ? ` data-viv-on="${experiment.on}"` : ''}</code>
 	<div class="controls">
@@ -66,6 +74,19 @@
 		width: 44px;
 		height: 44px;
 		border-radius: 11px;
+		background: var(--accent-grad);
+	}
+
+	/* _child compositions animate children, so give the subject some */
+	.subject.as-parent {
+		background: none;
+		display: flex;
+		gap: 4px;
+	}
+
+	.subject.as-parent i {
+		flex: 1;
+		border-radius: 5px;
 		background: var(--accent-grad);
 	}
 

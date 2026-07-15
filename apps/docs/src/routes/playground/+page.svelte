@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { SvelteFlow, Background, Controls, type NodeTypes } from '@xyflow/svelte';
 	import '@xyflow/svelte/dist/style.css';
+	import { TRIGGERS, type VivTrigger } from 'vivace';
 
 	import TriggerNode from '$lib/components/nodes/TriggerNode.svelte';
 	import AnimationNode from '$lib/components/nodes/AnimationNode.svelte';
@@ -9,6 +11,19 @@
 	import PreviewRow from '$lib/components/PreviewRow.svelte';
 	import { playground } from '$lib/stores/playground.svelte';
 	import { compose, toSnippet } from '$lib/compose';
+	import { EXAMPLES } from '$lib/examples';
+
+	// Shared URLs (?c=@fd|@sl-y&on=appearing) seed the chain, A.css-style.
+	onMount(() => {
+		const params = new URLSearchParams(window.location.search);
+		const c = params.get('c');
+		if (!c) return;
+		const on = params.get('on');
+		playground.load(
+			c.split('|').filter(Boolean),
+			on && (TRIGGERS as readonly string[]).includes(on) ? (on as VivTrigger) : 'load'
+		);
+	});
 
 	const nodeTypes: NodeTypes = {
 		trigger: TriggerNode,
@@ -21,11 +36,22 @@
 	const snippet = $derived(toSnippet(composition));
 
 	let copied = $state(false);
+	let shared = $state(false);
 
 	async function copy() {
 		await navigator.clipboard.writeText(snippet);
 		copied = true;
 		setTimeout(() => (copied = false), 1500);
+	}
+
+	async function share() {
+		const url = new URL(window.location.href);
+		url.search = '';
+		url.searchParams.set('c', composition.viv);
+		if (composition.on !== 'load') url.searchParams.set('on', composition.on);
+		await navigator.clipboard.writeText(url.toString());
+		shared = true;
+		setTimeout(() => (shared = false), 1500);
 	}
 
 	function addRow() {
@@ -45,6 +71,15 @@
 			the chain.
 		</p>
 	</header>
+
+	<div class="examples">
+		<span>Examples:</span>
+		{#each EXAMPLES as example (example.name)}
+			<button class="chip" onclick={() => playground.load(example.tokens, example.on)}>
+				{example.name}
+			</button>
+		{/each}
+	</div>
 
 	<div class="canvas">
 		<SvelteFlow
@@ -72,6 +107,9 @@
 				<button class="btn" onclick={copy} disabled={!composition.complete}>
 					{copied ? 'Copied ✓' : 'Copy'}
 				</button>
+				<button class="btn" onclick={share} disabled={!composition.complete}>
+					{shared ? 'Link copied ✓' : 'Share'}
+				</button>
 				<button class="btn primary" onclick={addRow} disabled={!composition.complete}>
 					+ Add experiment
 				</button>
@@ -80,7 +118,14 @@
 		{#if composition.complete}
 			<div class="live">
 				{#key composition.viv + composition.on}
-					<div data-viv={composition.viv} data-viv-on={composition.on} class="live-subject"></div>
+					<div
+						data-viv={composition.viv}
+						data-viv-on={composition.on}
+						class="live-subject"
+						class:as-parent={composition.viv.includes('_child')}
+					>
+						{#if composition.viv.includes('_child')}<i></i><i></i><i></i>{/if}
+					</div>
 				{/key}
 				<span class="live-hint">
 					{composition.on === 'load' ? 'plays on mount' : `waiting for ${composition.on}…`}
@@ -124,6 +169,35 @@
 		margin: 0;
 		color: var(--text-dim);
 		font-size: 0.9rem;
+	}
+
+	.examples {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.examples span {
+		color: var(--text-dim);
+		font-size: 0.85rem;
+	}
+
+	.chip {
+		padding: 0.3rem 0.9rem;
+		border-radius: 999px;
+		border: 1px solid var(--border);
+		background: var(--bg-card);
+		color: var(--accent-2);
+		font-family: var(--mono);
+		font-size: 0.8rem;
+		cursor: pointer;
+		transition: border-color 0.15s ease;
+	}
+
+	.chip:hover {
+		border-color: var(--accent);
 	}
 
 	.canvas {
@@ -185,6 +259,19 @@
 		width: 44px;
 		height: 44px;
 		border-radius: 11px;
+		background: var(--accent-grad);
+	}
+
+	/* _child compositions animate children, so give the subject some */
+	.live-subject.as-parent {
+		background: none;
+		display: flex;
+		gap: 4px;
+	}
+
+	.live-subject.as-parent i {
+		flex: 1;
+		border-radius: 5px;
 		background: var(--accent-grad);
 	}
 
