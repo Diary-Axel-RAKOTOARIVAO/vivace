@@ -23,7 +23,9 @@
 	const snippet = $derived(toSnippet(composition));
 
 	// Widgets read their state straight from the groups.
-	const childMode = $derived(playground.groups.some((g) => g.mods.some((m) => m.token.startsWith('_child'))));
+	const childMode = $derived(
+		playground.groups.some((g) => g.mods.some((m) => m.token.startsWith('_child')))
+	);
 	const originToken = $derived(
 		playground.groups.flatMap((g) => g.mods).find((m) => m.token.startsWith('_origin'))?.token ??
 			null
@@ -80,263 +82,330 @@
 	<title>Playground — Vivace</title>
 </svelte:head>
 
-<main class="mx-auto max-w-5xl px-5 py-12">
-	<h1 class="mb-8 text-2xl font-extrabold tracking-tight">Playground</h1>
+<div class="flex h-[calc(100dvh-3.5rem)] flex-col md:flex-row">
+	<!-- CANVAS: the <div> under test, on a flow-style dotted field -->
+	<section class="dots relative min-h-[45vh] flex-1 overflow-hidden">
+		<!-- generated markup, floating panel -->
+		<div
+			class="absolute top-4 left-4 z-10 max-w-[calc(100%-2rem)] overflow-x-auto rounded-box border border-base-300 bg-base-100/95 px-4 py-3 shadow-sm"
+		>
+			<code class="block bg-transparent p-0 text-xs leading-relaxed whitespace-pre"><span
+					class="text-base-content/40">&lt;div&nbsp;</span
+				>data-viv=<span class="token">"{composition.viv}"</span>{#if composition.on !== 'load'}&nbsp;data-viv-on=<span
+						class="token">"{composition.on}"</span
+					>{/if}<span class="text-base-content/40">&gt;</span>{'\n'}<span
+					class="text-base-content/30">  …</span
+				>{'\n'}<span class="text-base-content/40">&lt;/div&gt;</span></code>
+		</div>
 
-	<div class="grid items-start gap-10 md:grid-cols-[1fr_20rem]">
-		<!-- LEFT: the actual <div> -->
-		<section class="min-w-0">
-			<code class="block overflow-x-auto bg-transparent p-0 text-[13px] whitespace-nowrap">
-				<span class="text-base-content/40">&lt;div&nbsp;</span>data-viv=<span class="token"
-					>"{composition.viv}"</span
-				>{#if composition.on !== 'load'}&nbsp;data-viv-on=<span class="token"
-						>"{composition.on}"</span
-					>{/if}<span class="text-base-content/40">&gt;</span>
-			</code>
-
-			<div
-				class="my-2 flex min-h-56 items-center justify-center overflow-hidden border border-dashed border-base-content/35 px-6 py-10"
-				bind:this={stage}
-			>
-				{#key snippet + childMode + childCount}
-					{#if childMode}
-						<div
-							data-viv={composition.viv}
-							data-viv-on={composition.on}
-							class="flex flex-wrap justify-center gap-1"
-						>
-							{#each Array(childCount), i (i)}
-								<div
-									class="flex h-20 w-24 items-center justify-center border border-base-300 bg-base-200 text-lg font-bold"
-								>
-									V
-								</div>
-							{/each}
-						</div>
-					{:else}
-						<div
-							data-viv={composition.viv}
-							data-viv-on={composition.on}
-							class="flex h-20 w-24 items-center justify-center border border-base-300 bg-base-200 text-lg font-bold"
-						>
-							V
-						</div>
-					{/if}
-				{/key}
-			</div>
-
-			<code class="block bg-transparent p-0 text-[13px] text-base-content/40">&lt;/div&gt;</code>
-
-			{#if childMode}
-				<div class="mt-3 flex gap-1.5">
-					{#each [2, 3, 4, 6] as n (n)}
-						<button
-							class="btn btn-square btn-xs font-mono {childCount === n
-								? 'btn-neutral'
-								: 'btn-ghost border border-base-300'}"
-							onclick={() => (childCount = n)}
-						>
-							{n}
-						</button>
-					{/each}
-				</div>
-			{/if}
-		</section>
-
-		<!-- RIGHT: controls -->
-		<aside class="flex flex-col gap-5 rounded-box border border-base-300 bg-base-200/40 p-5">
-			<!-- Trigger -->
-			<label class="flex items-center justify-between gap-2">
-				<span class="font-mono text-xs text-base-content/50">on:</span>
-				<select
-					bind:value={playground.triggerValue}
-					class="select select-sm grow bg-base-100 font-mono text-[13px]"
-					aria-label="Trigger"
-				>
-					{#each TRIGGER_OPTIONS as option (option.value)}
-						<option value={option.value}>{option.value}</option>
-					{/each}
-				</select>
-			</label>
-
-			<!-- Groups: one @key + its connected modifiers -->
-			<div class="flex flex-col gap-3">
-				{#each playground.groups as group (group.id)}
-					<div class="rounded-field border border-base-300 bg-base-100 p-2.5">
-						<div class="flex items-center gap-1">
-							<select
-								bind:value={group.key}
-								class="select select-sm token grow text-[13px]"
-								aria-label="Animation key"
+		<!-- stage -->
+		<div class="flex h-full items-center justify-center p-10" bind:this={stage}>
+			{#key snippet + childMode + childCount}
+				{#if childMode}
+					<div
+						data-viv={composition.viv}
+						data-viv-on={composition.on}
+						class="flex flex-wrap justify-center gap-1.5"
+					>
+						{#each Array(childCount), i (i)}
+							<div
+								class="flex h-20 w-24 items-center justify-center rounded-field border border-base-300 bg-base-100 text-lg font-bold shadow-sm"
 							>
-								{#each PRESETS as preset (preset.key)}
-									{#each preset.variants as v (v)}
-										<option value={v}>{v}</option>
-									{/each}
-								{/each}
-							</select>
-							{#if playground.groups.length > 1}
-								<button
-									class="btn btn-circle btn-ghost h-6 min-h-0 w-6 text-error"
-									aria-label="Remove group"
-									onclick={() => playground.removeGroup(group.id)}
-								>
-									<iconify-icon icon="lucide:x" width="13"></iconify-icon>
-								</button>
-							{/if}
-						</div>
-
-						{#if group.mods.length > 0}
-							<div class="mt-1.5 flex flex-col gap-1 border-l-2 border-base-300 pl-2">
-								{#each group.mods as mod (mod.id)}
-									<span class="flex items-center gap-1">
-										<button
-											class="btn btn-circle btn-ghost h-5 min-h-0 w-5 text-error"
-											aria-label="Remove modifier"
-											onclick={() => playground.removeMod(group.id, mod.id)}
-										>
-											<iconify-icon icon="lucide:minus" width="12"></iconify-icon>
-										</button>
-										<select
-											bind:value={mod.token}
-											class="select select-xs token grow text-xs"
-											aria-label="Modifier"
-										>
-											{#each MODIFIERS as m (m.key)}
-												{#each m.variants as v (v)}
-													<option value={v}>{v}</option>
-												{/each}
-											{/each}
-										</select>
-									</span>
-								{/each}
+								V
 							</div>
-						{/if}
-
-						<button
-							class="btn btn-ghost btn-xs mt-1.5 gap-1 font-mono text-base-content/60"
-							onclick={() => playground.addMod(group.id)}
-						>
-							<iconify-icon icon="lucide:plus" width="12"></iconify-icon>
-							_modifier
-						</button>
+						{/each}
 					</div>
-				{/each}
-
-				<button
-					class="btn btn-outline btn-sm gap-1.5 border-base-300 tracking-[0.15em]"
-					title="Mix in another animation key"
-					onclick={() => playground.addGroup()}
-				>
-					<iconify-icon icon="lucide:plus" width="14"></iconify-icon>
-					MIX
-				</button>
-			</div>
-
-			<!-- Target (tree) & origin (grid), like the A.css reference tool -->
-			<div class="flex items-center justify-center gap-6">
-				<div class="flex flex-col items-center" role="group" aria-label="Animation target">
-					<button
-						class="p-1"
-						title="Animate the element itself"
-						aria-label="Animate the element itself"
-						aria-pressed={!childMode}
-						onclick={() => playground.setChildMode(false)}
+				{:else}
+					<div
+						data-viv={composition.viv}
+						data-viv-on={composition.on}
+						class="flex h-24 w-28 items-center justify-center rounded-field border border-base-300 bg-base-100 text-xl font-bold shadow-sm"
 					>
-						<span
-							class="block h-3.5 w-3.5 rounded-full border-2 {!childMode
-								? 'border-accent bg-accent'
-								: 'border-base-content/40 bg-base-100'}"
-						></span>
+						V
+					</div>
+				{/if}
+			{/key}
+		</div>
+
+		<!-- child count, floating bottom-left -->
+		{#if childMode}
+			<div
+				class="absolute bottom-4 left-4 z-10 flex items-center gap-1.5 rounded-box border border-base-300 bg-base-100/95 p-1.5 shadow-sm"
+			>
+				<iconify-icon icon="lucide:layout-grid" width="14" class="ml-1 text-base-content/40"
+				></iconify-icon>
+				{#each [2, 3, 4, 6] as n (n)}
+					<button
+						class="btn btn-square btn-xs font-mono {childCount === n
+							? 'btn-neutral'
+							: 'btn-ghost'}"
+						onclick={() => (childCount = n)}
+					>
+						{n}
 					</button>
-					<svg width="46" height="10" viewBox="0 0 46 10" class="text-base-content/30">
-						<path
-							d="M23 0 L7 10 M23 0 L23 10 M23 0 L39 10"
-							stroke="currentColor"
-							fill="none"
-							stroke-width="1.5"
-						/>
-					</svg>
-					<button
-						class="flex gap-2 p-1"
-						title="Animate the children (_child)"
-						aria-label="Animate the children"
-						aria-pressed={childMode}
-						onclick={() => playground.setChildMode(true)}
-					>
-						{#each [0, 1, 2] as i (i)}
+				{/each}
+			</div>
+		{/if}
+
+		<!-- examples, floating bottom-center -->
+		<div
+			class="absolute bottom-4 left-1/2 z-10 flex max-w-[70%] -translate-x-1/2 items-center gap-1.5 overflow-x-auto rounded-box border border-base-300 bg-base-100/95 p-1.5 shadow-sm"
+		>
+			{#each EXAMPLES as example (example.name)}
+				<button
+					class="btn btn-ghost btn-xs shrink-0 font-mono font-normal"
+					onclick={() => playground.load(example.viv, example.on)}
+				>
+					{example.name}
+				</button>
+			{/each}
+		</div>
+
+		<!-- replay, floating bottom-right -->
+		<button
+			class="btn btn-primary btn-circle absolute right-4 bottom-4 z-10 shadow-md"
+			title="Play"
+			aria-label="Play"
+			onclick={play}
+			disabled={!composition.complete}
+		>
+			<iconify-icon icon="lucide:play" width="18"></iconify-icon>
+		</button>
+	</section>
+
+	<!-- SIDEBAR: controls -->
+	<aside
+		class="flex w-full flex-col border-t border-base-300 bg-base-100 md:h-full md:w-80 md:border-t-0 md:border-l"
+	>
+		<div class="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
+			<!-- Target & origin widgets — on top -->
+			<section>
+				<h2 class="mb-3 text-[11px] font-semibold tracking-wider text-base-content/50 uppercase">
+					Target · Origin
+				</h2>
+				<div
+					class="flex items-center justify-center gap-8 rounded-field border border-base-300 bg-base-200/40 py-4"
+				>
+					<div class="flex flex-col items-center" role="group" aria-label="Animation target">
+						<button
+							class="p-1"
+							title="Animate the element itself"
+							aria-label="Animate the element itself"
+							aria-pressed={!childMode}
+							onclick={() => playground.setChildMode(false)}
+						>
 							<span
-								class="block h-3.5 w-3.5 rounded-full border-2 {childMode
+								class="block h-3.5 w-3.5 rounded-full border-2 transition-colors {!childMode
 									? 'border-accent bg-accent'
 									: 'border-base-content/40 bg-base-100'}"
 							></span>
+						</button>
+						<svg width="46" height="10" viewBox="0 0 46 10" class="text-base-content/30">
+							<path
+								d="M23 0 L7 10 M23 0 L23 10 M23 0 L39 10"
+								stroke="currentColor"
+								fill="none"
+								stroke-width="1.5"
+							/>
+						</svg>
+						<button
+							class="flex gap-2 p-1"
+							title="Animate the children (_child)"
+							aria-label="Animate the children"
+							aria-pressed={childMode}
+							onclick={() => playground.setChildMode(true)}
+						>
+							{#each [0, 1, 2] as i (i)}
+								<span
+									class="block h-3.5 w-3.5 rounded-full border-2 transition-colors {childMode
+										? 'border-accent bg-accent'
+										: 'border-base-content/40 bg-base-100'}"
+								></span>
+							{/each}
+						</button>
+					</div>
+
+					<span class="h-12 w-px bg-base-300"></span>
+
+					<div
+						class="grid grid-cols-3 gap-[3px]"
+						role="group"
+						aria-label="Transform origin (_origin)"
+					>
+						{#each ORIGIN_CELLS as cell, i (i)}
+							<button
+								class="h-5 w-5 rounded-[3px] transition-colors {originToken === cell &&
+								cell !== null
+									? 'bg-accent'
+									: cell === null && originToken === null
+										? 'bg-base-content/50'
+										: 'bg-base-300 hover:bg-base-content/35'}"
+								title={cell ?? 'center (default)'}
+								aria-label={cell ?? 'center (default)'}
+								onclick={() => playground.setOrigin(cell)}
+							></button>
 						{/each}
+					</div>
+				</div>
+			</section>
+
+			<!-- Trigger -->
+			<section>
+				<h2 class="mb-3 text-[11px] font-semibold tracking-wider text-base-content/50 uppercase">
+					Trigger
+				</h2>
+				<label class="flex items-center gap-2">
+					<span class="font-mono text-xs text-base-content/50">on:</span>
+					<select
+						bind:value={playground.triggerValue}
+						class="select select-sm grow font-mono text-[13px]"
+						aria-label="Trigger"
+					>
+						{#each TRIGGER_OPTIONS as option (option.value)}
+							<option value={option.value}>{option.value}</option>
+						{/each}
+					</select>
+				</label>
+			</section>
+
+			<!-- Composition groups -->
+			<section>
+				<h2 class="mb-3 text-[11px] font-semibold tracking-wider text-base-content/50 uppercase">
+					Composition
+				</h2>
+				<div class="flex flex-col gap-2.5">
+					{#each playground.groups as group (group.id)}
+						<div class="rounded-field border border-base-300 bg-base-200/40 p-2.5">
+							<div class="flex items-center gap-1">
+								<select
+									bind:value={group.key}
+									class="select select-sm token grow bg-base-100 text-[13px]"
+									aria-label="Animation key"
+								>
+									{#each PRESETS as preset (preset.key)}
+										{#each preset.variants as v (v)}
+											<option value={v}>{v}</option>
+										{/each}
+									{/each}
+								</select>
+								{#if playground.groups.length > 1}
+									<button
+										class="btn btn-circle btn-ghost h-6 min-h-0 w-6 text-error"
+										aria-label="Remove group"
+										onclick={() => playground.removeGroup(group.id)}
+									>
+										<iconify-icon icon="lucide:x" width="13"></iconify-icon>
+									</button>
+								{/if}
+							</div>
+
+							{#if group.mods.length > 0}
+								<div class="mt-1.5 flex flex-col gap-1 border-l-2 border-base-300 pl-2">
+									{#each group.mods as mod (mod.id)}
+										<span class="flex items-center gap-1">
+											<button
+												class="btn btn-circle btn-ghost h-5 min-h-0 w-5 text-error"
+												aria-label="Remove modifier"
+												onclick={() => playground.removeMod(group.id, mod.id)}
+											>
+												<iconify-icon icon="lucide:minus" width="12"></iconify-icon>
+											</button>
+											<select
+												bind:value={mod.token}
+												class="select select-xs token grow bg-base-100 text-xs"
+												aria-label="Modifier"
+											>
+												{#each MODIFIERS as m (m.key)}
+													{#each m.variants as v (v)}
+														<option value={v}>{v}</option>
+													{/each}
+												{/each}
+											</select>
+										</span>
+									{/each}
+								</div>
+							{/if}
+
+							<button
+								class="btn btn-ghost btn-xs mt-1.5 gap-1 font-mono text-base-content/60"
+								onclick={() => playground.addMod(group.id)}
+							>
+								<iconify-icon icon="lucide:plus" width="12"></iconify-icon>
+								_modifier
+							</button>
+						</div>
+					{/each}
+
+					<button
+						class="btn btn-outline btn-sm gap-1.5 border-base-300 tracking-[0.15em]"
+						title="Mix in another animation key"
+						onclick={() => playground.addGroup()}
+					>
+						<iconify-icon icon="lucide:plus" width="14"></iconify-icon>
+						MIX
 					</button>
 				</div>
+			</section>
 
-				<span class="h-12 w-px bg-base-300"></span>
+			<!-- Experiments -->
+			{#if playground.experiments.length > 0}
+				<section>
+					<h2 class="mb-3 text-[11px] font-semibold tracking-wider text-base-content/50 uppercase">
+						Experiments · {playground.experiments.length}
+					</h2>
+					<div class="flex flex-col gap-2">
+						{#each playground.experiments as experiment (experiment.id)}
+							<PreviewRow {experiment} />
+						{/each}
+					</div>
+				</section>
+			{/if}
+		</div>
 
-				<div
-					class="grid grid-cols-3 gap-[3px]"
-					role="group"
-					aria-label="Transform origin (_origin)"
-				>
-					{#each ORIGIN_CELLS as cell, i (i)}
-						<button
-							class="h-4.5 w-4.5 rounded-[3px] transition-colors {originToken === cell &&
-							cell !== null
-								? 'bg-accent'
-								: cell === null && originToken === null
-									? 'bg-base-content/50'
-									: 'bg-base-300 hover:bg-base-content/35'}"
-							title={cell ?? 'center (default)'}
-							aria-label={cell ?? 'center (default)'}
-							onclick={() => playground.setOrigin(cell)}
-						></button>
-					{/each}
-				</div>
-			</div>
-
-			<!-- Actions -->
-			<button
-				class="btn btn-primary tracking-[0.15em]"
-				onclick={play}
-				disabled={!composition.complete}
-			>
+		<!-- Action bar -->
+		<div class="grid grid-cols-[1fr_auto_auto_auto] gap-1.5 border-t border-base-300 p-3">
+			<button class="btn btn-primary btn-sm tracking-[0.15em]" onclick={play} disabled={!composition.complete}>
 				PLAY
 			</button>
-			<div class="grid grid-cols-3 gap-1.5">
-				<button class="btn btn-sm border-base-300" onclick={copy} disabled={!composition.complete}>
-					{copied ? '✓' : 'Copy'}
-				</button>
-				<button class="btn btn-sm border-base-300" onclick={share} disabled={!composition.complete}>
-					{shared ? '✓' : 'Share'}
-				</button>
-				<button class="btn btn-sm border-base-300" onclick={addRow} disabled={!composition.complete}>
-					Keep
-				</button>
-			</div>
-		</aside>
-	</div>
-
-	<div class="mt-8 flex flex-wrap items-center gap-1.5">
-		<span class="mr-1 text-sm text-base-content/50">Examples:</span>
-		{#each EXAMPLES as example (example.name)}
 			<button
-				class="badge badge-lg cursor-pointer border-base-300 bg-base-100 font-mono text-xs hover:border-base-content/40"
-				onclick={() => playground.load(example.viv, example.on)}
+				class="btn btn-square btn-sm border-base-300"
+				title="Copy snippet"
+				aria-label="Copy snippet"
+				onclick={copy}
+				disabled={!composition.complete}
 			>
-				{example.name}
+				<iconify-icon icon={copied ? 'lucide:check' : 'lucide:copy'} width="14"></iconify-icon>
 			</button>
-		{/each}
-	</div>
+			<button
+				class="btn btn-square btn-sm border-base-300"
+				title="Copy share link"
+				aria-label="Copy share link"
+				onclick={share}
+				disabled={!composition.complete}
+			>
+				<iconify-icon icon={shared ? 'lucide:check' : 'lucide:link'} width="14"></iconify-icon>
+			</button>
+			<button
+				class="btn btn-square btn-sm border-base-300"
+				title="Keep as experiment"
+				aria-label="Keep as experiment"
+				onclick={addRow}
+				disabled={!composition.complete}
+			>
+				<iconify-icon icon="lucide:bookmark-plus" width="14"></iconify-icon>
+			</button>
+		</div>
+	</aside>
+</div>
 
-	{#if playground.experiments.length > 0}
-		<section class="mt-8 flex w-full flex-col gap-3">
-			<h2 class="text-lg font-bold">Experiments</h2>
-			{#each playground.experiments as experiment (experiment.id)}
-				<PreviewRow {experiment} />
-			{/each}
-		</section>
-	{/if}
-</main>
+<style>
+	/* Svelte-Flow-style dotted field */
+	.dots {
+		background-color: var(--color-base-200);
+		background-image: radial-gradient(
+			color-mix(in oklch, var(--color-base-content) 22%, transparent) 1px,
+			transparent 1px
+		);
+		background-size: 20px 20px;
+	}
+</style>

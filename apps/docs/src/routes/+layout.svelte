@@ -2,9 +2,13 @@
 	import '../app.css';
 	import 'vivace/vivace.css';
 	import Vivace from 'vivace';
+	import { page } from '$app/state';
 	import favicon from '$lib/assets/favicon.svg';
 
 	let { children } = $props();
+
+	// The playground is a full-viewport app view — no footer there.
+	const isPlayground = $derived(page.url.pathname.startsWith('/playground'));
 
 	$effect(() => {
 		// Client-only: registers the <iconify-icon> web component.
@@ -40,12 +44,14 @@
 
 	{@render children()}
 
-	<footer class="border-t border-base-300 mt-16">
-		<div
-			class="mx-auto flex max-w-5xl items-center justify-between px-5 py-6 text-sm text-base-content/60"
-		>
-			<span>MIT — keyframe DSL inspired by A.css</span>
-			<span class="font-mono text-xs">bun add vivace</span>
-		</div>
-	</footer>
+	{#if !isPlayground}
+		<footer class="border-t border-base-300 mt-16">
+			<div
+				class="mx-auto flex max-w-5xl items-center justify-between px-5 py-6 text-sm text-base-content/60"
+			>
+				<span>MIT — keyframe DSL inspired by A.css</span>
+				<span class="font-mono text-xs">bun add vivace</span>
+			</div>
+		</footer>
+	{/if}
 </div>
