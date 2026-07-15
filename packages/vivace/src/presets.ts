@@ -117,6 +117,34 @@ export const PRESETS: PresetMeta[] = [
     variants: ['@dr', '@dr!'],
     vivace: true,
   },
+  {
+    key: '@sq',
+    name: 'Squash',
+    description: 'Cartoon squash & stretch; ! starts stretched tall.',
+    variants: ['@sq', '@sq!'],
+    vivace: true,
+  },
+  {
+    key: '@hb',
+    name: 'Heartbeat',
+    description: 'Two scale pulses, the second softer. Pair with _repeat.',
+    variants: ['@hb'],
+    vivace: true,
+  },
+  {
+    key: '@wv',
+    name: 'Wave',
+    description: 'Vertical bob that settles; shines staggered across children.',
+    variants: ['@wv', '@wv!'],
+    vivace: true,
+  },
+  {
+    key: '@gl',
+    name: 'Glow',
+    description: 'Drop-shadow bloom in the element’s own color; _alt makes it pulse.',
+    variants: ['@gl', '@gl-o'],
+    vivace: true,
+  },
 ]
 
 export interface ModifierMeta {

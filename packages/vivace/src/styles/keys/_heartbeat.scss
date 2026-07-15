@@ -1,0 +1,17 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @hb — Heartbeat — new in Vivace
+    Two scale pulses, the second softer. Pair with _repeat.
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@hb') {
+  --AN: #{c.$kf-10};
+  --AD: 1.2;
+  --Avhb: calc(0.2 * var(--AL));
+  --ASX1: calc(1 + var(--Avhb));
+  --ASY1: calc(1 + var(--Avhb));
+  --ASX3: calc(1 + var(--Avhb) * 0.7);
+  --ASY3: calc(1 + var(--Avhb) * 0.7);
+}

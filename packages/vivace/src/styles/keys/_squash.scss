@@ -1,0 +1,22 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @sq — Squash & stretch — new in Vivace
+    Cartoon deformation: x and y spring in opposite phase.
+    ! starts stretched tall instead of squashed wide.
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@sq') {
+  --AN: #{c.$kf-10};
+  --AD: 1;
+  --Arsq: 1;
+  @for $i from 0 through 9 {
+    --ASX#{$i}: calc(1 + #{m.alt($i)} * var(--ASP#{$i}) * var(--Arsq));
+    --ASY#{$i}: calc(1 - #{m.alt($i)} * var(--ASP#{$i}) * var(--Arsq));
+  }
+}
+
+#{m.sel('@sq!')} {
+  --Arsq: -1;
+}

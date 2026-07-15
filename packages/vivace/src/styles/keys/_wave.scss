@@ -1,0 +1,23 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @wv — Wave — new in Vivace
+    Vertical bob that settles, great staggered across children.
+    ! starts by dipping down instead of lifting up.
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@wv') {
+  --AN: #{c.$kf-10};
+  --AD: 1.2;
+  --Avwv: calc(-20% * var(--AL) * var(--Arwv, 1));
+  --ATY1: var(--Avwv);
+  --ATY3: calc(var(--Avwv) * -0.8);
+  --ATY5: calc(var(--Avwv) * 0.5);
+  --ATY7: calc(var(--Avwv) * -0.3);
+  --ATY9: calc(var(--Avwv) * 0.15);
+}
+
+#{m.sel('@wv!')} {
+  --Arwv: -1;
+}

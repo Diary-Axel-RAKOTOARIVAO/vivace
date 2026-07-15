@@ -1,0 +1,21 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    KEY: @gl — Glow — new in Vivace
+    Drop-shadow bloom in the element's own color. Fill-mode keeps
+    the glow lit; add _alt or _repeat for a pulse.
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+@use '../config' as c;
+@use '../mixins' as m;
+
+@include m.key('@gl') {
+  --AN: #{c.$kf-2};
+  --AD: 0.8;
+  --Avgl: calc(10px * var(--AL));
+  --AF0: drop-shadow(0 0 0 transparent);
+  --AF1: drop-shadow(0 0 var(--Avgl) currentColor);
+}
+
+@include m.key('@gl-o') {
+  --AF0: drop-shadow(0 0 var(--Avgl) currentColor);
+  --AF1: drop-shadow(0 0 0 transparent);
+}
