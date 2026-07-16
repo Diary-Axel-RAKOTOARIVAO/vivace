@@ -55,6 +55,10 @@ their key (the `_` delimits them); separate keys are space-separated —
 | `@sw` | Swing | pendulum from the top edge, `!` flip — *new in Vivace* |
 | `@pop` | Pop | elastic scale-in punch — *new in Vivace* |
 | `@dr` | Drop | fall in and bounce on landing, `!` rise — *new in Vivace* |
+| `@sq` | Squash | cartoon squash & stretch, `!` starts tall — *new in Vivace* |
+| `@hb` | Heartbeat | double scale pulse — *new in Vivace* |
+| `@wv` | Wave | settling vertical bob, great with `_child` — *new in Vivace* |
+| `@gl` | Glow | currentColor drop-shadow bloom, `_alt` pulses — *new in Vivace* |
 
 Keys compose: `@fd @sl-y` fades while sliding. `@bn @sl-x` slides in with a
 bounce landing.
@@ -99,7 +103,24 @@ Vivace.init(root?)     // scan + arm; idempotent, defaults to document.body
 Vivace.trigger(el)     // fire (or restart) regardless of trigger type
 Vivace.play(el)        // unpause, or fire if it never ran
 Vivace.pause(el)       // freeze in place
+await Vivace.out(el)   // play data-viv-out (default '@fd-o'), resolve when done
+Vivace.defineKey(token, { keyframe, duration, vars })  // runtime @key
+Vivace.defineTrigger(name, (el, fire) => teardown)     // custom data-viv-on
 Vivace.destroy()       // tear down observers/listeners (SPA cleanup)
+```
+
+Animated elements dispatch bubbling `vivace:play`, `vivace:out` and
+`vivace:end` events.
+
+### Exit animations
+
+```html
+<div data-viv="@dr" data-viv-out="@fd-o @sl-y-o">…</div>
+```
+
+```ts
+await Vivace.out(el)  // fill-mode keeps it hidden — remove without flash
+el.remove()
 ```
 
 ## SCSS

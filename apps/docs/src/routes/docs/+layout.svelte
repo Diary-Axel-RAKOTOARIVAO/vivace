@@ -10,7 +10,8 @@
 				{ href: '/docs', label: 'Getting started' },
 				{ href: '/docs/attributes', label: 'Attributes' },
 				{ href: '/docs/triggers', label: 'Triggers' },
-				{ href: '/docs/presets', label: 'Preset gallery' }
+				{ href: '/docs/presets', label: 'Preset gallery' },
+				{ href: '/docs/extending', label: 'Extending' }
 			]
 		},
 		{

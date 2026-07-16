@@ -31,6 +31,7 @@
 			<div class="flex items-center gap-1">
 				<a href="/docs" class="btn btn-ghost btn-sm font-medium">Docs</a>
 				<a href="/playground" class="btn btn-ghost btn-sm font-medium">Playground</a>
+				<a href="/gallery" class="btn btn-ghost btn-sm font-medium">Gallery</a>
 				<a
 					href="https://github.com/aureon-it/vivace"
 					class="btn btn-ghost btn-sm btn-square"

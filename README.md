@@ -28,6 +28,20 @@ bun run docs:dev    # docs site + playground on http://localhost:5173
 bun run lint        # biome
 ```
 
+## Deploying the docs (Cloudflare Workers + D1)
+
+The docs app ships the community gallery on D1. First deploy:
+
+```sh
+cd apps/docs
+bunx wrangler d1 create vivace-gallery         # paste the id into wrangler.jsonc
+bunx wrangler d1 migrations apply vivace-gallery --remote
+bun run build && bunx wrangler deploy
+```
+
+Local dev needs no account — `bun run dev` emulates the binding, seeded via
+`bunx wrangler d1 migrations apply vivace-gallery --local`.
+
 ## Releasing
 
 Versioning goes through [Changesets](https://github.com/changesets/changesets):
