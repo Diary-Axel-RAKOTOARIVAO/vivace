@@ -35,6 +35,22 @@
 		if (trig !== 'load') params.set('on', trig);
 		return `/playground?${params}`;
 	}
+
+	// Subjects have very different natural sizes (hero is ~3x a card) —
+	// give each a base width and a scale so previews fill the stage
+	// uniformly instead of clipping wide ones and dwarfing narrow ones.
+	const PREVIEW_FIT: Record<string, { width: number; scale: number }> = {
+		hero: { width: 640, scale: 0.52 },
+		nav: { width: 576, scale: 0.62 },
+		stats: { width: 460, scale: 0.72 },
+		list: { width: 300, scale: 0.78 },
+		toast: { width: 330, scale: 0.8 },
+		card: { width: 250, scale: 0.68 }
+	};
+
+	function fit(subject: string) {
+		return PREVIEW_FIT[subject] ?? PREVIEW_FIT.card!;
+	}
 </script>
 
 <svelte:head>
@@ -148,11 +164,25 @@
 
 	<div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 		{#each data.entries as entry (entry.id)}
-			<button class="entry group cursor-pointer overflow-hidden rounded-box border border-base-300 text-left transition-colors hover:border-base-content/40" onclick={replay}>
-				<div class="dots flex min-h-44 items-center justify-center overflow-hidden border-b border-base-200 p-6">
-					<div class="pointer-events-none origin-center scale-75">
+			<button
+				class="entry group cursor-pointer overflow-hidden rounded-box border border-base-300 text-left transition-colors hover:border-base-content/40"
+				title="Click to play"
+				onclick={replay}
+			>
+				<div class="dots relative flex h-48 items-center justify-center overflow-hidden border-b border-base-200">
+					<div
+						class="pointer-events-none flex shrink-0 justify-center"
+						style="width: {fit(entry.subject).width}px; transform: scale({fit(entry.subject)
+							.scale});"
+					>
 						<Subject template={entry.subject} viv={entry.viv} on="load" count={3} />
 					</div>
+					<span
+						class="absolute top-2 right-2 flex items-center gap-1 rounded-full border border-base-300 bg-base-100/90 px-2 py-0.5 text-[10px] font-medium text-base-content/55 transition-colors group-hover:border-base-content/40 group-hover:text-base-content"
+					>
+						<iconify-icon icon="lucide:play" width="10"></iconify-icon>
+						click to play
+					</span>
 				</div>
 				<div class="flex items-start justify-between gap-3 p-4">
 					<div class="min-w-0">
