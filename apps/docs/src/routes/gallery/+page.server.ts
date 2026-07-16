@@ -44,7 +44,7 @@ export const actions: Actions = {
 
 		const ipHash = await hashIp(getClientAddress());
 		if (await isRateLimited(db, ipHash)) {
-			return fail(429, { error: 'Rate limit reached — try again in an hour.', ...input });
+			return fail(429, { error: 'Slow down — try again in a minute.', ...input });
 		}
 
 		try {

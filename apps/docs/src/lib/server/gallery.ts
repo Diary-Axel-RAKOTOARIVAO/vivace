@@ -44,8 +44,8 @@ export const submissionSchema = z.object({
 
 export type SubmissionInput = z.infer<typeof submissionSchema>;
 
-/** Hourly submissions allowed per (hashed) IP. */
-export const RATE_LIMIT = 5;
+/** Submissions allowed per (hashed) IP per minute — anti-hammering, not a quota. */
+export const RATE_LIMIT = 3;
 
 const IP_SALT = 'vivace-gallery-v1';
 
@@ -58,7 +58,7 @@ export async function hashIp(ip: string): Promise<string> {
 export async function isRateLimited(db: D1Database, ipHash: string): Promise<boolean> {
 	const count = await db
 		.prepare(
-			"SELECT COUNT(*) AS n FROM gallery WHERE ip_hash = ? AND created_at > datetime('now', '-1 hour')"
+			"SELECT COUNT(*) AS n FROM gallery WHERE ip_hash = ? AND created_at > datetime('now', '-1 minute')"
 		)
 		.bind(ipHash)
 		.first<number>('n');
