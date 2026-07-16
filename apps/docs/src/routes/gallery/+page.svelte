@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
+	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import Vivace, { TRIGGER_OPTIONS } from 'vivace';
@@ -158,17 +158,19 @@
 	{/if}
 
 	{#if formOpen}
-		<form
-			id="share-form"
-			method="POST"
-			action="?/submit"
-			use:enhance={() =>
-				async ({ update }) => {
-					await update();
-					formOpen = false;
-				}}
-			class="mb-8 grid gap-3 rounded-box border border-base-300 bg-base-200/40 p-5 md:grid-cols-2"
-		>
+		<div class="modal modal-open" role="dialog" aria-label="Share a composition">
+			<form
+				id="share-form"
+				method="POST"
+				action="?/submit"
+				use:enhance={() =>
+					async ({ update }) => {
+						await update();
+						formOpen = false;
+					}}
+				class="modal-box grid max-w-xl gap-3 md:grid-cols-2"
+			>
+				<h3 class="text-base font-bold md:col-span-2">Share a composition</h3>
 			<label class="flex flex-col gap-1 text-sm font-medium">
 				Name
 				<input
@@ -237,19 +239,16 @@
 				</button>
 			</div>
 		</form>
+			<button class="modal-backdrop" aria-label="Close" onclick={() => (formOpen = false)}
+			></button>
+		</div>
 	{/if}
 
 	<div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 		<!-- share tile: preview-card shaped, dashed -->
 		<button
 			class="flex min-h-64 cursor-pointer flex-col items-center justify-center gap-3 rounded-box border-2 border-dashed border-base-300 text-base-content/45 transition-colors hover:border-base-content/35 hover:text-base-content/70"
-			onclick={async () => {
-				formOpen = true;
-				await tick();
-				document
-					.querySelector('#share-form')
-					?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-			}}
+			onclick={() => (formOpen = true)}
 		>
 			<span class="grid h-12 w-12 place-items-center rounded-full border-2 border-dashed border-current">
 				<iconify-icon icon="lucide:plus" width="22"></iconify-icon>
