@@ -27,6 +27,7 @@
 	},
 	"dependencies": {
 		"iconify-icon": "^3.0.2",
-		"vivace": "workspace:*"
+		"vivace": "workspace:*",
+		"zod": "^4.4.3"
 	}
 }

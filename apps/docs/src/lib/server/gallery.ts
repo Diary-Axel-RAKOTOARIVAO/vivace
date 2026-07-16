@@ -1,5 +1,6 @@
 import type { D1Database } from '@cloudflare/workers-types';
 import { TRIGGERS } from 'vivace';
+import { z } from 'zod';
 
 export interface GalleryEntry {
 	id: number;
@@ -11,53 +12,109 @@ export interface GalleryEntry {
 	created_at: string;
 }
 
-export const SUBJECT_IDS = ['stats', 'card', 'hero', 'list', 'nav', 'toast'];
+export const SUBJECT_IDS = ['stats', 'card', 'hero', 'list', 'nav', 'toast'] as const;
 
 /** Compositions are @/_ tokens only — reject anything else before it hits the DB. */
 const VIV_PATTERN = /^[@_a-z0-9!+.\- ]+$/i;
 
-export interface SubmissionInput {
-	name: string;
-	author: string;
-	viv: string;
-	trig: string;
-	subject: string;
+/** GitHub username rules: 1–39 alphanumerics/hyphens, no leading/trailing/double hyphen. */
+const GITHUB_USERNAME = /^(?!-)(?!.*--)[a-z\d-]{1,39}$/i;
+
+export const submissionSchema = z.object({
+	name: z
+		.string()
+		.trim()
+		.min(2, 'Name must be 2–40 characters.')
+		.max(40, 'Name must be 2–40 characters.'),
+	author: z
+		.string()
+		.trim()
+		.regex(GITHUB_USERNAME, 'Author must be a valid GitHub username.')
+		.refine((v) => !v.endsWith('-'), 'Author must be a valid GitHub username.'),
+	viv: z
+		.string()
+		.trim()
+		.min(3, 'Composition must be 3–200 characters.')
+		.max(200, 'Composition must be 3–200 characters.')
+		.regex(VIV_PATTERN, 'Composition may only contain @keys and _modifiers.')
+		.refine((v) => v.includes('@'), 'Composition needs at least one @key.'),
+	trig: z.enum(TRIGGERS as unknown as [string, ...string[]], { message: 'Unknown trigger.' }),
+	subject: z.enum(SUBJECT_IDS, { message: 'Unknown subject.' })
+});
+
+export type SubmissionInput = z.infer<typeof submissionSchema>;
+
+/** Hourly submissions allowed per (hashed) IP. */
+export const RATE_LIMIT = 5;
+
+const IP_SALT = 'vivace-gallery-v1';
+
+export async function hashIp(ip: string): Promise<string> {
+	const bytes = new TextEncoder().encode(`${IP_SALT}:${ip}`);
+	const digest = await crypto.subtle.digest('SHA-256', bytes);
+	return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-export function validateSubmission(input: SubmissionInput): string | null {
-	const name = input.name.trim();
-	const author = input.author.trim();
-	const viv = input.viv.trim();
+export async function isRateLimited(db: D1Database, ipHash: string): Promise<boolean> {
+	const count = await db
+		.prepare(
+			"SELECT COUNT(*) AS n FROM gallery WHERE ip_hash = ? AND created_at > datetime('now', '-1 hour')"
+		)
+		.bind(ipHash)
+		.first<number>('n');
+	return (count ?? 0) >= RATE_LIMIT;
+}
 
-	if (name.length < 2 || name.length > 40) return 'Name must be 2–40 characters.';
-	if (author.length < 2 || author.length > 30) return 'Author must be 2–30 characters.';
-	if (viv.length < 3 || viv.length > 200) return 'Composition must be 3–200 characters.';
-	if (!VIV_PATTERN.test(viv) || !viv.includes('@')) {
-		return 'Composition may only contain @keys and _modifiers.';
+/**
+ * Server-side Turnstile check (browser → this Worker → siteverify;
+ * never from the browser). Test keys make local dev always pass.
+ */
+export const TURNSTILE_TEST_SITE_KEY = '1x00000000000000000000AA';
+const TURNSTILE_TEST_SECRET = '1x0000000000000000000000000000000AA';
+
+export async function verifyTurnstile(
+	secret: string | undefined,
+	token: string,
+	ip?: string
+): Promise<boolean> {
+	if (!token) return false;
+	try {
+		const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({
+				secret: secret ?? TURNSTILE_TEST_SECRET,
+				response: token,
+				remoteip: ip
+			})
+		});
+		const data = (await res.json()) as { success?: boolean };
+		return data.success === true;
+	} catch {
+		return false;
 	}
-	if (!(TRIGGERS as readonly string[]).includes(input.trig)) return 'Unknown trigger.';
-	if (!SUBJECT_IDS.includes(input.subject)) return 'Unknown subject.';
-	return null;
 }
 
 export async function listEntries(db: D1Database, limit = 60): Promise<GalleryEntry[]> {
 	const { results } = await db
-		.prepare('SELECT id, name, author, viv, trig, subject, created_at FROM gallery ORDER BY created_at DESC, id DESC LIMIT ?')
+		.prepare(
+			'SELECT id, name, author, viv, trig, subject, created_at FROM gallery ORDER BY created_at DESC, id DESC LIMIT ?'
+		)
 		.bind(limit)
 		.all<GalleryEntry>();
 	return results;
 }
 
-export async function insertEntry(db: D1Database, input: SubmissionInput): Promise<void> {
+export async function insertEntry(
+	db: D1Database,
+	input: SubmissionInput,
+	ipHash: string
+): Promise<void> {
 	await db
-		.prepare('INSERT INTO gallery (name, author, viv, trig, subject) VALUES (?, ?, ?, ?, ?)')
-		.bind(
-			input.name.trim(),
-			input.author.trim(),
-			input.viv.trim(),
-			input.trig,
-			input.subject
+		.prepare(
+			'INSERT INTO gallery (name, author, viv, trig, subject, ip_hash) VALUES (?, ?, ?, ?, ?, ?)'
 		)
+		.bind(input.name, input.author, input.viv, input.trig, input.subject, ipHash)
 		.run();
 }
 

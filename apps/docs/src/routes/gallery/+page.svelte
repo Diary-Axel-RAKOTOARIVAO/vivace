@@ -1,11 +1,50 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
+	import { env } from '$env/dynamic/public';
 	import Vivace, { TRIGGER_OPTIONS } from 'vivace';
 	import Subject from '$lib/components/Subject.svelte';
 	import { SUBJECTS } from '$lib/subjects';
 
 	let { data, form } = $props();
+
+	// Official Turnstile test sitekey (always passes) unless a real one is set.
+	const turnstileSiteKey = env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA';
+	let turnstileEl = $state<HTMLElement>();
+	let formOpen = $state(false);
+
+	// Widget script loads lazily when the form first opens; explicit render
+	// handles reopen (implicit rendering only runs once at script load).
+	$effect(() => {
+		if (!formOpen || !turnstileEl) return;
+		const w = window as typeof window & {
+			turnstile?: { render: (el: HTMLElement, opts: Record<string, string>) => void };
+		};
+		const render = () => {
+			if (turnstileEl && turnstileEl.childElementCount === 0) {
+				w.turnstile?.render(turnstileEl, {
+					sitekey: turnstileSiteKey,
+					action: 'turnstile-spin-v1'
+				});
+			}
+		};
+		if (w.turnstile) {
+			render();
+			return;
+		}
+		const existing = document.querySelector<HTMLScriptElement>('script[data-turnstile]');
+		if (existing) {
+			existing.addEventListener('load', render, { once: true });
+			return;
+		}
+		const script = document.createElement('script');
+		script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+		script.async = true;
+		script.defer = true;
+		script.setAttribute('data-turnstile', '');
+		script.addEventListener('load', render, { once: true });
+		document.head.appendChild(script);
+	});
 
 	// Playground's Publish button prefills via query params; failed
 	// submissions echo the typed values back.
@@ -17,8 +56,6 @@
 		subject:
 			form && 'subject' in form ? form.subject : (page.url.searchParams.get('subject') ?? 'card')
 	});
-
-	let formOpen = $state(false);
 
 	$effect(() => {
 		if (prefill.viv) formOpen = true;
@@ -103,16 +140,19 @@
 				/>
 			</label>
 			<label class="flex flex-col gap-1 text-sm font-medium">
-				Author
+				GitHub username
 				<input
 					name="author"
 					required
-					minlength="2"
-					maxlength="30"
-					class="input input-sm w-full"
-					placeholder="you"
+					maxlength="39"
+					pattern="[A-Za-z0-9\-]+"
+					class="input input-sm w-full font-mono"
+					placeholder="octocat"
 					value={prefill.author}
 				/>
+				<span class="text-[11px] font-normal text-base-content/50">
+					Shown with your avatar, linked to your profile.
+				</span>
 			</label>
 			<label class="flex flex-col gap-1 text-sm font-medium md:col-span-2">
 				Composition
@@ -145,6 +185,9 @@
 					{/each}
 				</select>
 			</label>
+			<div class="md:col-span-2">
+				<div bind:this={turnstileEl}></div>
+			</div>
 			{#if form?.error}
 				<p class="text-sm text-error md:col-span-2">{form.error}</p>
 			{/if}
@@ -188,7 +231,21 @@
 					<div class="min-w-0">
 						<div class="flex items-center gap-2">
 							<span class="font-semibold">{entry.name}</span>
-							<span class="text-xs text-base-content/45">by {entry.author}</span>
+							<a
+								href="https://github.com/{entry.author}"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="flex items-center gap-1 text-xs text-base-content/45 hover:text-base-content"
+								onclick={(e) => e.stopPropagation()}
+							>
+								<img
+									src="https://github.com/{entry.author}.png?size=32"
+									alt=""
+									loading="lazy"
+									class="h-4 w-4 rounded-full bg-base-300"
+								/>
+								{entry.author}
+							</a>
 						</div>
 						<code class="mt-1 block overflow-x-auto bg-transparent p-0 text-[11px] whitespace-nowrap text-base-content/60">
 							{entry.viv}{entry.trig !== 'load' ? ` · on:${entry.trig}` : ''}
