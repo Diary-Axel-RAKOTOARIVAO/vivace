@@ -36,6 +36,16 @@
 		return `/playground?${params}`;
 	}
 
+	let copiedId = $state<number | null>(null);
+
+	async function copyEntry(event: MouseEvent, entry: { id: number; viv: string; trig: string }) {
+		event.stopPropagation();
+		const on = entry.trig === 'load' ? '' : ` data-viv-on="${entry.trig}"`;
+		await navigator.clipboard.writeText(`<div data-viv="${entry.viv}"${on}>…</div>`);
+		copiedId = entry.id;
+		setTimeout(() => (copiedId = null), 1500);
+	}
+
 	// Subjects have very different natural sizes (hero is ~3x a card) —
 	// give each a base width and a scale so previews fill the stage
 	// uniformly instead of clipping wide ones and dwarfing narrow ones.
@@ -167,12 +177,14 @@
 
 	<div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 		{#each data.entries as entry (entry.id)}
-			<button
-				class="entry group cursor-pointer overflow-hidden rounded-box border border-base-300 text-left transition-colors hover:border-base-content/40"
-				title="Click to play"
-				onclick={replay}
+			<article
+				class="entry group overflow-hidden rounded-box border border-base-300 transition-colors hover:border-base-content/40"
 			>
-				<div class="dots relative flex h-48 items-center justify-center overflow-hidden border-b border-base-200">
+				<button
+					class="dots relative flex h-48 w-full cursor-pointer items-center justify-center overflow-hidden border-b border-base-200"
+					title="Click to play"
+					onclick={replay}
+				>
 					<div
 						class="pointer-events-none flex shrink-0 justify-center"
 						style="width: {fit(entry.subject).width}px; transform: scale({fit(entry.subject)
@@ -186,7 +198,7 @@
 						<iconify-icon icon="lucide:play" width="10"></iconify-icon>
 						click to play
 					</span>
-				</div>
+				</button>
 				<div class="flex items-start justify-between gap-3 p-4">
 					<div class="min-w-0">
 						<div class="flex items-center gap-2">
@@ -211,16 +223,30 @@
 							{entry.viv}{entry.trig !== 'load' ? ` · on:${entry.trig}` : ''}
 						</code>
 					</div>
-					<a
-						href={playgroundUrl(entry.viv, entry.trig)}
-						class="btn btn-ghost btn-xs shrink-0 gap-1 text-base-content/60"
-						onclick={(e) => e.stopPropagation()}
-					>
-						<iconify-icon icon="lucide:pencil-ruler" width="12"></iconify-icon>
-						remix
-					</a>
+					<span class="flex shrink-0 gap-1">
+						<button
+							class="btn btn-ghost btn-xs gap-1 text-base-content/60"
+							title="Copy the snippet"
+							onclick={(e) => copyEntry(e, entry)}
+						>
+							<iconify-icon
+								icon={copiedId === entry.id ? 'lucide:check' : 'lucide:copy'}
+								width="12"
+							></iconify-icon>
+							{copiedId === entry.id ? 'copied' : 'copy'}
+						</button>
+						<a
+							href={playgroundUrl(entry.viv, entry.trig)}
+							class="btn btn-ghost btn-xs gap-1 text-base-content/60"
+							title="Open in the playground"
+							onclick={(e) => e.stopPropagation()}
+						>
+							<iconify-icon icon="lucide:pencil-ruler" width="12"></iconify-icon>
+							remix
+						</a>
+					</span>
 				</div>
-			</button>
+			</article>
 		{/each}
 	</div>
 
