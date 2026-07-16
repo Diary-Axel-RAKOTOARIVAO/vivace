@@ -8,13 +8,18 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
+	"routes": [
+		{ "pattern": "usevivace.dev", "custom_domain": true },
+		{ "pattern": "www.usevivace.dev", "custom_domain": true }
+	],
+	"observability": {
+		"enabled": true
+	},
 	"d1_databases": [
 		{
 			"binding": "DB",
 			"database_name": "vivace-gallery",
-			// Replace with the real id from `wrangler d1 create vivace-gallery`
-			// before the first remote deploy. Local dev doesn't need it.
-			"database_id": "00000000-0000-0000-0000-000000000000",
+			"database_id": "7f074f52-8daa-4a3d-9305-5e8c1773fb25",
 			"migrations_dir": "migrations"
 		}
 	]
