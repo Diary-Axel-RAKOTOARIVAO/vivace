@@ -1,5 +1,6 @@
 <script lang="ts">
 	import CodeBlock from '$lib/components/CodeBlock.svelte';
+	import InstallTabs from '$lib/components/InstallTabs.svelte';
 	const cdn = `<!doctype html>
 <html>
   <head>
@@ -43,7 +44,9 @@ Vivace.init()`;
 
 <h2>With a bundler (no framework)</h2>
 
-<CodeBlock lang="shellscript" code={"bun add vivace"} />
+<div class="not-prose my-4">
+	<InstallTabs />
+</div>
 
 <CodeBlock lang="javascript" code={bundler} />
 

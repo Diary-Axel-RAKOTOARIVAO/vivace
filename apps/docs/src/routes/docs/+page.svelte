@@ -1,6 +1,7 @@
 <script lang="ts">
 	import CodeBlock from '$lib/components/CodeBlock.svelte';
 	import Callout from '$lib/components/Callout.svelte';
+	import InstallTabs from '$lib/components/InstallTabs.svelte';
 
 	const setup = `import Vivace from 'vivace'
 import 'vivace/vivace.css'
@@ -27,7 +28,9 @@ Vivace.init()`;
 
 <h2>Install</h2>
 
-<CodeBlock lang="shellscript" code={'bun add vivace   # or npm install vivace'} />
+<div class="not-prose my-4">
+	<InstallTabs />
+</div>
 
 <h2>Set up</h2>
 
