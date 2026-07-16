@@ -1,4 +1,4 @@
-import type { VivTrigger } from 'vivace';
+import type { VivTrigger } from 'vivace-css';
 
 /**
  * Preview subjects — mock page sections the composition is applied to.

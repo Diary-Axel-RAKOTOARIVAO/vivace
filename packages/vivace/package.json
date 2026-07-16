@@ -1,16 +1,16 @@
 {
-  "name": "vivace",
-  "version": "0.1.0",
+  "name": "vivace-css",
+  "version": "1.0.0",
   "description": "Attribute-driven CSS animation library with a tiny trigger engine — compose animations in HTML with data-viv.",
   "license": "MIT",
   "author": "Axel RAKOTOARIVAO <axeldiaryrakotoarivao@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aureon-it/vivace.git",
+    "url": "git+https://github.com/Diary-Axel-RAKOTOARIVAO/vivace.git",
     "directory": "packages/vivace"
   },
-  "homepage": "https://github.com/aureon-it/vivace#readme",
-  "bugs": "https://github.com/aureon-it/vivace/issues",
+  "homepage": "https://github.com/Diary-Axel-RAKOTOARIVAO/vivace#readme",
+  "bugs": "https://github.com/Diary-Axel-RAKOTOARIVAO/vivace/issues",
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.cjs",

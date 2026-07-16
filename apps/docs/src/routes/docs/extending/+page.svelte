@@ -2,7 +2,7 @@
 	import CodeBlock from '$lib/components/CodeBlock.svelte';
 	import Callout from '$lib/components/Callout.svelte';
 
-	const defineKey = `import Vivace from 'vivace'
+	const defineKey = `import Vivace from 'vivace-css'
 
 // '@wb' — a little wobble, usable immediately in any data-viv
 Vivace.defineKey('@wb', {
@@ -16,7 +16,7 @@ Vivace.defineKey('@wb', {
   }
 })`;
 
-	const defineTrigger = `import Vivace from 'vivace'
+	const defineTrigger = `import Vivace from 'vivace-css'
 
 // data-viv-on="longpress"
 Vivace.defineTrigger('longpress', (el, fire) => {
@@ -47,7 +47,7 @@ Vivace.defineTrigger('longpress', (el, fire) => {
   // bubbles — listen on the element, a container, or document
 })`;
 
-	const out = `import Vivace from 'vivace'
+	const out = `import Vivace from 'vivace-css'
 
 // <div data-viv="@dr" data-viv-out="@fd-o @sl-y-o">…</div>
 await Vivace.out(toast)   // plays the exit, resolves when done

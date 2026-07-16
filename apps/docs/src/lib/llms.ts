@@ -1,4 +1,4 @@
-import { MODIFIERS, PRESETS, TRIGGER_OPTIONS } from 'vivace';
+import { MODIFIERS, PRESETS, TRIGGER_OPTIONS } from 'vivace-css';
 
 /**
  * One-file markdown documentation for AI agents (llms.txt convention).
@@ -42,8 +42,8 @@ When asked to add animations to a project using Vivace:
    root — never per component:
 
    \`\`\`ts
-   import Vivace from 'vivace'
-   import 'vivace/vivace.css'
+   import Vivace from 'vivace-css'
+   import 'vivace-css/vivace.css'
    Vivace.init()
    \`\`\`
 
@@ -157,7 +157,7 @@ Slot vocabulary for defineKey / SCSS keys: \`--ATX0..10\`/\`--ATY*\` translate,
 
 \`vivace/scss\` exposes the source with a plugin-per-file layout: one file
 per key in \`keys/\`, per modifier group in \`modifiers/\`. Configure via
-\`@use 'vivace/scss' with ($child-count: 20)\`. Custom bundles: write an
+\`@use 'vivace-css/scss' with ($child-count: 20)\`. Custom bundles: write an
 entry that @uses \`keyframes\`, \`base\` and only the plugins you want.
 
 ## Links
@@ -165,6 +165,6 @@ entry that @uses \`keyframes\`, \`base\` and only the plugins you want.
 - Docs: https://usevivace.dev/docs
 - Playground (compose visually, copy the attribute): https://usevivace.dev/playground
 - Community gallery: https://usevivace.dev/gallery
-- Repository: https://github.com/aureon-it/vivace
+- Repository: https://github.com/Diary-Axel-RAKOTOARIVAO/vivace
 `;
 }

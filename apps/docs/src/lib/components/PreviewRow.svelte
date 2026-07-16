@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Vivace from 'vivace';
+	import Vivace from 'vivace-css';
 	import type { Experiment } from '$lib/stores/playground.svelte';
 	import { playground } from '$lib/stores/playground.svelte';
 	import PlayPauseButton from './PlayPauseButton.svelte';

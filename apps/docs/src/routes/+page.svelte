@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Vivace, { PRESETS } from 'vivace';
+	import Vivace, { PRESETS } from 'vivace-css';
 	import CodeBlock from '$lib/components/CodeBlock.svelte';
 	import InstallTabs from '$lib/components/InstallTabs.svelte';
 
@@ -22,8 +22,8 @@
 		return () => clearInterval(timer);
 	});
 
-	const stepInit = `import Vivace from 'vivace'
-import 'vivace/vivace.css'
+	const stepInit = `import Vivace from 'vivace-css'
+import 'vivace-css/vivace.css'
 
 Vivace.init()`;
 

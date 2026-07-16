@@ -3,8 +3,8 @@
 	const app = `<!-- App.vue -->
 <script setup>
 import { onMounted, onUnmounted } from 'vue'
-import Vivace from 'vivace'
-import 'vivace/vivace.css'
+import Vivace from 'vivace-css'
+import 'vivace-css/vivace.css'
 
 onMounted(() => Vivace.init())
 onUnmounted(() => Vivace.destroy())
@@ -21,8 +21,8 @@ onUnmounted(() => Vivace.destroy())
 </ul>`;
 
 	const nuxt = `// plugins/vivace.client.ts
-import Vivace from 'vivace'
-import 'vivace/vivace.css'
+import Vivace from 'vivace-css'
+import 'vivace-css/vivace.css'
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.hook('app:mounted', () => Vivace.init())
@@ -30,7 +30,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 	const programmatic = `<script setup>
 import { useTemplateRef } from 'vue'
-import Vivace from 'vivace'
+import Vivace from 'vivace-css'
 
 const box = useTemplateRef('box')
 <\/script>

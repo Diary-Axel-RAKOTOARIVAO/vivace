@@ -1,4 +1,4 @@
-import type { VivTrigger } from 'vivace';
+import type { VivTrigger } from 'vivace-css';
 import { parseViv } from '$lib/compose';
 
 /**

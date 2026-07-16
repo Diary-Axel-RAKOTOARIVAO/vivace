@@ -1,4 +1,4 @@
-import type { VivTrigger } from 'vivace';
+import type { VivTrigger } from 'vivace-css';
 import type { Group } from './stores/playground.svelte';
 
 export interface Composition {

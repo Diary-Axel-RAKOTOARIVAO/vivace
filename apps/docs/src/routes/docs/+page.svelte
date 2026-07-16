@@ -3,8 +3,8 @@
 	import Callout from '$lib/components/Callout.svelte';
 	import InstallTabs from '$lib/components/InstallTabs.svelte';
 
-	const setup = `import Vivace from 'vivace'
-import 'vivace/vivace.css'
+	const setup = `import Vivace from 'vivace-css'
+import 'vivace-css/vivace.css'
 
 Vivace.init()`;
 

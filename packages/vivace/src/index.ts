@@ -36,8 +36,8 @@ let initialized = false
 /**
  * Vivace — attribute-driven animations with a real trigger system.
  *
- *   import Vivace from 'vivace'
- *   import 'vivace/vivace.css'
+ *   import Vivace from 'vivace-css'
+ *   import 'vivace-css/vivace.css'
  *   Vivace.init()
  *
  * Everything else happens in HTML:

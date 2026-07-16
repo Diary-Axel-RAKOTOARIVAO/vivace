@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import Vivace, { MODIFIERS, PRESETS, TRIGGER_OPTIONS, TRIGGERS, type VivTrigger } from 'vivace';
+	import Vivace, { MODIFIERS, PRESETS, TRIGGER_OPTIONS, TRIGGERS, type VivTrigger } from 'vivace-css';
 
 	import PreviewRow from '$lib/components/PreviewRow.svelte';
 	import Subject from '$lib/components/Subject.svelte';
@@ -14,10 +14,10 @@
 	// Install hint in the code panel, honoring the package-manager choice
 	// remembered by the docs' install tabs.
 	const PM_COMMANDS: Record<string, string> = {
-		bun: 'bun add vivace',
-		npm: 'npm install vivace',
-		pnpm: 'pnpm add vivace',
-		yarn: 'yarn add vivace'
+		bun: 'bun add vivace-css',
+		npm: 'npm install vivace-css',
+		pnpm: 'pnpm add vivace-css',
+		yarn: 'yarn add vivace-css'
 	};
 	let installCommand = $state(PM_COMMANDS.bun!);
 	let installCopied = $state(false);

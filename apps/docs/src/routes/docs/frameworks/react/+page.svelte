@@ -4,8 +4,8 @@
 
 	const app = `// App.tsx
 import { useEffect } from 'react'
-import Vivace from 'vivace'
-import 'vivace/vivace.css'
+import Vivace from 'vivace-css'
+import 'vivace-css/vivace.css'
 
 export default function App() {
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function App() {
 'use client'
 
 import { useEffect } from 'react'
-import Vivace from 'vivace'
+import Vivace from 'vivace-css'
 
 export function VivaceProvider() {
   useEffect(() => {
@@ -39,7 +39,7 @@ export function VivaceProvider() {
 }
 
 // app/layout.tsx
-import 'vivace/vivace.css'
+import 'vivace-css/vivace.css'
 import { VivaceProvider } from './vivace-provider'
 
 export default function RootLayout({ children }) {
@@ -54,7 +54,7 @@ export default function RootLayout({ children }) {
 }`;
 
 	const programmatic = `import { useRef } from 'react'
-import Vivace from 'vivace'
+import Vivace from 'vivace-css'
 
 function Card() {
   const ref = useRef<HTMLDivElement>(null)

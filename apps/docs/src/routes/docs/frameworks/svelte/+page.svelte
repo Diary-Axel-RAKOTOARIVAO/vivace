@@ -2,8 +2,8 @@
 	import CodeBlock from '$lib/components/CodeBlock.svelte';
 	const layout = `<!-- src/routes/+layout.svelte -->
 <script>
-  import Vivace from 'vivace'
-  import 'vivace/vivace.css'
+  import Vivace from 'vivace-css'
+  import 'vivace-css/vivace.css'
 
   let { children } = $props()
 
@@ -24,7 +24,7 @@
 </ul>`;
 
 	const programmatic = `<script>
-  import Vivace from 'vivace'
+  import Vivace from 'vivace-css'
 
   let box
 <\/script>

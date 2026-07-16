@@ -4,7 +4,7 @@
 	const cdn = `<!doctype html>
 <html>
   <head>
-    <link rel="stylesheet" href="https://esm.sh/vivace/dist/vivace.min.css" />
+    <link rel="stylesheet" href="https://esm.sh/vivace-css/dist/vivace.min.css" />
   </head>
   <body>
     <h1 data-viv="@fd @sl-y_ease-out-expo">Hello</h1>
@@ -16,15 +16,15 @@
     </section>
 
     <script type="module">
-      import Vivace from 'https://esm.sh/vivace'
+      import Vivace from 'https://esm.sh/vivace-css'
       Vivace.init()
     <\/script>
   </body>
 </html>`;
 
 	const bundler = `// main.js
-import Vivace from 'vivace'
-import 'vivace/vivace.css'
+import Vivace from 'vivace-css'
+import 'vivace-css/vivace.css'
 
 Vivace.init()`;
 </script>

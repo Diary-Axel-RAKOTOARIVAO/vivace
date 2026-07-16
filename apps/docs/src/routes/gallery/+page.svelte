@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
-	import Vivace, { TRIGGER_OPTIONS } from 'vivace';
+	import Vivace, { TRIGGER_OPTIONS } from 'vivace-css';
 	import GithubUserCheck from '$lib/components/GithubUserCheck.svelte';
 	import Subject from '$lib/components/Subject.svelte';
 	import { SUBJECTS } from '$lib/subjects';

@@ -1,9 +1,9 @@
 <script lang="ts">
 	const MANAGERS = [
-		{ id: 'bun', icon: 'simple-icons:bun', command: 'bun add vivace' },
-		{ id: 'npm', icon: 'simple-icons:npm', command: 'npm install vivace' },
-		{ id: 'pnpm', icon: 'simple-icons:pnpm', command: 'pnpm add vivace' },
-		{ id: 'yarn', icon: 'simple-icons:yarn', command: 'yarn add vivace' }
+		{ id: 'bun', icon: 'simple-icons:bun', command: 'bun add vivace-css' },
+		{ id: 'npm', icon: 'simple-icons:npm', command: 'npm install vivace-css' },
+		{ id: 'pnpm', icon: 'simple-icons:pnpm', command: 'pnpm add vivace-css' },
+		{ id: 'yarn', icon: 'simple-icons:yarn', command: 'yarn add vivace-css' }
 	] as const;
 
 	const STORAGE_KEY = 'vivace-pm';

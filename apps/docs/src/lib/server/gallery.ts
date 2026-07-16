@@ -1,5 +1,5 @@
 import type { D1Database } from '@cloudflare/workers-types';
-import { TRIGGERS } from 'vivace';
+import { TRIGGERS } from 'vivace-css';
 import { z } from 'zod';
 
 export interface GalleryEntry {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { VivTrigger } from 'vivace';
+	import type { VivTrigger } from 'vivace-css';
 
 	let {
 		template,

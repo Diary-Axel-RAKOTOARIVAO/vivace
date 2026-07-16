@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
-	import 'vivace/vivace.css';
-	import Vivace from 'vivace';
+	import 'vivace-css/vivace.css';
+	import Vivace from 'vivace-css';
 	import { page } from '$app/state';
 	import favicon from '$lib/assets/favicon.svg';
 	import profile from '$lib/assets/profil.png';
@@ -40,7 +40,7 @@
 				<a href="/playground" class="btn btn-ghost btn-sm font-medium">Playground</a>
 				<a href="/gallery" class="btn btn-ghost btn-sm font-medium">Gallery</a>
 				<a
-					href="https://github.com/aureon-it/vivace"
+					href="https://github.com/Diary-Axel-RAKOTOARIVAO/vivace"
 					class="btn btn-ghost btn-sm btn-square"
 					aria-label="GitHub"
 				>
@@ -92,7 +92,7 @@
 				</div>
 				<div class="text-right text-sm text-base-content/60">
 					<div>MIT — keyframe DSL inspired by A.css</div>
-					<div class="mt-0.5 font-mono text-xs">bun add vivace</div>
+					<div class="mt-0.5 font-mono text-xs">bun add vivace-css</div>
 				</div>
 			</div>
 		</footer>

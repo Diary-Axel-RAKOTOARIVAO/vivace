@@ -2,7 +2,7 @@
 	import CodeBlock from '$lib/components/CodeBlock.svelte';
 	import Callout from '$lib/components/Callout.svelte';
 
-	const api = `import Vivace from 'vivace'
+	const api = `import Vivace from 'vivace-css'
 
 Vivace.trigger(el)  // fire or restart, regardless of trigger type
 Vivace.pause(el)    // freeze mid-animation

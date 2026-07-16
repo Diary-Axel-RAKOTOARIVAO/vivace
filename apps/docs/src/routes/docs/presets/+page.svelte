@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Vivace, { PRESETS, MODIFIERS } from 'vivace';
+	import Vivace, { PRESETS, MODIFIERS } from 'vivace-css';
 
 	function replay(event: MouseEvent) {
 		const card = event.currentTarget as HTMLElement;

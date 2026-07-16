@@ -7,8 +7,8 @@
   },
   "private": true,
   "scripts": {
-    "build": "bun run --filter 'vivace' build",
-    "test": "bun run --filter 'vivace' test",
+    "build": "bun run --filter 'vivace-css' build",
+    "test": "bun run --filter 'vivace-css' test",
     "lint": "biome check .",
     "format": "biome format --write .",
     "docs:dev": "bun run --filter 'docs' dev",

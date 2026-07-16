@@ -13,12 +13,12 @@ components, works in plain HTML, React, Svelte, Vue, anything that renders DOM.
 ## Install
 
 ```sh
-bun add vivace   # or npm / pnpm / yarn
+bun add vivace-css   # or npm / pnpm / yarn
 ```
 
 ```ts
-import Vivace from 'vivace'
-import 'vivace/vivace.css'
+import Vivace from 'vivace-css'
+import 'vivace-css/vivace.css'
 
 Vivace.init()
 ```
@@ -133,17 +133,17 @@ Consuming the source lets you re-configure the attribute name, spring table,
 stagger size and more:
 
 ```scss
-@use 'vivace/scss' with ($child-count: 20);
+@use 'vivace-css/scss' with ($child-count: 20);
 ```
 
 **Custom bundles** — write your own entry with only the plugins you want:
 
 ```scss
-@use 'vivace/src/styles/keyframes';
-@use 'vivace/src/styles/base';
-@use 'vivace/src/styles/keys/fade';
-@use 'vivace/src/styles/keys/slide';
-@use 'vivace/src/styles/modifiers/easing';
+@use 'vivace-css/src/styles/keyframes';
+@use 'vivace-css/src/styles/base';
+@use 'vivace-css/src/styles/keys/fade';
+@use 'vivace-css/src/styles/keys/slide';
+@use 'vivace-css/src/styles/modifiers/easing';
 ```
 
 **Adding an animation key** — drop a file in `keys/` that fills variable
