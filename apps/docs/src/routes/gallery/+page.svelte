@@ -1,50 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
-	import { env } from '$env/dynamic/public';
 	import Vivace, { TRIGGER_OPTIONS } from 'vivace';
 	import Subject from '$lib/components/Subject.svelte';
 	import { SUBJECTS } from '$lib/subjects';
 
 	let { data, form } = $props();
 
-	// Official Turnstile test sitekey (always passes) unless a real one is set.
-	const turnstileSiteKey = env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA';
-	let turnstileEl = $state<HTMLElement>();
 	let formOpen = $state(false);
-
-	// Widget script loads lazily when the form first opens; explicit render
-	// handles reopen (implicit rendering only runs once at script load).
-	$effect(() => {
-		if (!formOpen || !turnstileEl) return;
-		const w = window as typeof window & {
-			turnstile?: { render: (el: HTMLElement, opts: Record<string, string>) => void };
-		};
-		const render = () => {
-			if (turnstileEl && turnstileEl.childElementCount === 0) {
-				w.turnstile?.render(turnstileEl, {
-					sitekey: turnstileSiteKey,
-					action: 'turnstile-spin-v1'
-				});
-			}
-		};
-		if (w.turnstile) {
-			render();
-			return;
-		}
-		const existing = document.querySelector<HTMLScriptElement>('script[data-turnstile]');
-		if (existing) {
-			existing.addEventListener('load', render, { once: true });
-			return;
-		}
-		const script = document.createElement('script');
-		script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-		script.async = true;
-		script.defer = true;
-		script.setAttribute('data-turnstile', '');
-		script.addEventListener('load', render, { once: true });
-		document.head.appendChild(script);
-	});
 
 	// Playground's Publish button prefills via query params; failed
 	// submissions echo the typed values back.
@@ -185,9 +148,6 @@
 					{/each}
 				</select>
 			</label>
-			<div class="md:col-span-2">
-				<div bind:this={turnstileEl}></div>
-			</div>
 			{#if form?.error}
 				<p class="text-sm text-error md:col-span-2">{form.error}</p>
 			{/if}

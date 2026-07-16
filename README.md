@@ -39,15 +39,8 @@ bunx wrangler d1 migrations apply vivace-gallery --remote
 bun run build && bunx wrangler deploy
 ```
 
-The gallery form is Turnstile-protected. Locally the official test keys are
-used (always pass). For production, create a widget in the Cloudflare
-dashboard (Turnstile → Add site), then:
-
-```sh
-bunx wrangler secret put TURNSTILE_SECRET_KEY   # paste the widget secret
-# and set the public sitekey as a var:
-#   "vars": { "PUBLIC_TURNSTILE_SITE_KEY": "<sitekey>" }  in wrangler.jsonc
-```
+Gallery submissions are guarded by zod validation, a 5-per-hour per-IP rate
+limit and a uniqueness index — no CAPTCHA.
 
 Local dev needs no account — `bun run dev` emulates the binding, seeded via
 `bunx wrangler d1 migrations apply vivace-gallery --local`.

@@ -65,36 +65,6 @@ export async function isRateLimited(db: D1Database, ipHash: string): Promise<boo
 	return (count ?? 0) >= RATE_LIMIT;
 }
 
-/**
- * Server-side Turnstile check (browser → this Worker → siteverify;
- * never from the browser). Test keys make local dev always pass.
- */
-export const TURNSTILE_TEST_SITE_KEY = '1x00000000000000000000AA';
-const TURNSTILE_TEST_SECRET = '1x0000000000000000000000000000000AA';
-
-export async function verifyTurnstile(
-	secret: string | undefined,
-	token: string,
-	ip?: string
-): Promise<boolean> {
-	if (!token) return false;
-	try {
-		const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-			method: 'POST',
-			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify({
-				secret: secret ?? TURNSTILE_TEST_SECRET,
-				response: token,
-				remoteip: ip
-			})
-		});
-		const data = (await res.json()) as { success?: boolean };
-		return data.success === true;
-	} catch {
-		return false;
-	}
-}
-
 export async function listEntries(db: D1Database, limit = 60): Promise<GalleryEntry[]> {
 	const { results } = await db
 		.prepare(

@@ -5,8 +5,7 @@ import {
 	insertEntry,
 	isRateLimited,
 	listEntries,
-	submissionSchema,
-	verifyTurnstile
+	submissionSchema
 } from '$lib/server/gallery';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -43,18 +42,7 @@ export const actions: Actions = {
 			return fail(400, { error, ...input });
 		}
 
-		const ip = getClientAddress();
-
-		const human = await verifyTurnstile(
-			platform?.env?.TURNSTILE_SECRET_KEY,
-			String(form.get('cf-turnstile-response') ?? ''),
-			ip
-		);
-		if (!human) {
-			return fail(403, { error: 'Bot check failed — please retry the challenge.', ...input });
-		}
-
-		const ipHash = await hashIp(ip);
+		const ipHash = await hashIp(getClientAddress());
 		if (await isRateLimited(db, ipHash)) {
 			return fail(429, { error: 'Rate limit reached — try again in an hour.', ...input });
 		}

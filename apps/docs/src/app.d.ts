@@ -11,8 +11,6 @@ declare global {
 		interface Platform {
 			env?: {
 				DB: D1Database;
-				/** Turnstile secret; unset locally = official test secret (always passes). */
-				TURNSTILE_SECRET_KEY?: string;
 			};
 		}
 	}
