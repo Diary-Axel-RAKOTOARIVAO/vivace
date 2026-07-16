@@ -327,9 +327,11 @@
 									aria-label="Animation key"
 								>
 									{#each PRESETS as preset (preset.key)}
-										{#each preset.variants as v (v)}
-											<option value={v}>{v}</option>
-										{/each}
+										<optgroup label="{preset.key} — {preset.name}">
+											{#each preset.variants as v (v)}
+												<option value={v}>{v}</option>
+											{/each}
+										</optgroup>
 									{/each}
 								</select>
 								{#if playground.groups.length > 1}
@@ -360,9 +362,11 @@
 												aria-label="Modifier"
 											>
 												{#each MODIFIERS as m (m.key)}
-													{#each m.variants as v (v)}
-														<option value={v}>{v}</option>
-													{/each}
+													<optgroup label="{m.key} — {m.name}">
+														{#each m.variants as v (v)}
+															<option value={v}>{v}</option>
+														{/each}
+													</optgroup>
 												{/each}
 											</select>
 										</span>
