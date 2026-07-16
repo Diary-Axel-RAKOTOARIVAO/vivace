@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import Vivace, { TRIGGER_OPTIONS } from 'vivace';
@@ -8,6 +9,65 @@
 	let { data, form } = $props();
 
 	let formOpen = $state(false);
+
+	// --- voting: per-browser identity + a GitHub name, no login ---
+	let ghName = $state('');
+	let ghPromptFor = $state<number | null>(null);
+	let ghInput = $state('');
+	let votedIds = $state<Set<number>>(new Set());
+	let voteCounts = $state<Record<number, number>>({});
+
+	onMount(() => {
+		ghName = localStorage.getItem('vivace-gh') ?? '';
+		try {
+			votedIds = new Set(JSON.parse(localStorage.getItem('vivace-voted') ?? '[]'));
+		} catch {
+			votedIds = new Set();
+		}
+	});
+
+	function voterId(): string {
+		let v = localStorage.getItem('vivace-voter');
+		if (!v) {
+			v = crypto.randomUUID();
+			localStorage.setItem('vivace-voter', v);
+		}
+		return v;
+	}
+
+	async function vote(entryId: number) {
+		if (!data.live) return;
+		if (!ghName) {
+			ghInput = '';
+			ghPromptFor = entryId;
+			return;
+		}
+		const res = await fetch('/gallery/vote', {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify({ id: entryId, voter: voterId(), gh: ghName })
+		});
+		if (!res.ok) return;
+		const { voted, votes } = (await res.json()) as { voted: boolean; votes: number };
+		voteCounts[entryId] = votes;
+		const next = new Set(votedIds);
+		if (voted) next.add(entryId);
+		else next.delete(entryId);
+		votedIds = next;
+		localStorage.setItem('vivace-voted', JSON.stringify([...next]));
+	}
+
+	function saveGh() {
+		const value = ghInput.trim();
+		if (!value) return;
+		ghName = value;
+		localStorage.setItem('vivace-gh', value);
+		const id = ghPromptFor;
+		ghPromptFor = null;
+		if (id !== null) vote(id);
+	}
+
+	const pageCount = $derived(Math.max(1, Math.ceil(data.total / data.perPage)));
 
 	// Playground's Publish button prefills via query params; failed
 	// submissions echo the typed values back.
@@ -225,6 +285,17 @@
 					</div>
 					<span class="flex shrink-0 gap-1">
 						<button
+							class="btn btn-xs gap-1 {votedIds.has(entry.id)
+								? 'btn-neutral'
+								: 'btn-ghost text-base-content/60'}"
+							title={data.live ? 'Upvote' : 'Voting unavailable'}
+							disabled={!data.live}
+							onclick={() => vote(entry.id)}
+						>
+							<iconify-icon icon="lucide:arrow-big-up" width="13"></iconify-icon>
+							{voteCounts[entry.id] ?? entry.votes}
+						</button>
+						<button
 							class="btn btn-ghost btn-xs gap-1 text-base-content/60"
 							title="Copy the snippet"
 							onclick={(e) => copyEntry(e, entry)}
@@ -253,7 +324,63 @@
 	{#if data.entries.length === 0}
 		<p class="py-16 text-center text-base-content/50">Nothing here yet — be the first to share.</p>
 	{/if}
+
+	{#if pageCount > 1}
+		<nav class="mt-10 flex justify-center" aria-label="Gallery pages">
+			<div class="join">
+				<a
+					class="join-item btn btn-sm {data.page <= 1 ? 'btn-disabled' : ''}"
+					href="?page={data.page - 1}"
+					aria-label="Previous page"
+				>
+					<iconify-icon icon="lucide:chevron-left" width="14"></iconify-icon>
+				</a>
+				{#each Array(pageCount), i (i)}
+					<a
+						class="join-item btn btn-sm font-mono {data.page === i + 1 ? 'btn-active' : ''}"
+						href="?page={i + 1}"
+					>
+						{i + 1}
+					</a>
+				{/each}
+				<a
+					class="join-item btn btn-sm {data.page >= pageCount ? 'btn-disabled' : ''}"
+					href="?page={data.page + 1}"
+					aria-label="Next page"
+				>
+					<iconify-icon icon="lucide:chevron-right" width="14"></iconify-icon>
+				</a>
+			</div>
+		</nav>
+	{/if}
 </main>
+
+{#if ghPromptFor !== null}
+	<div class="modal modal-open" role="dialog" aria-label="GitHub username">
+		<div class="modal-box max-w-sm">
+			<h3 class="text-base font-bold">One-time: your GitHub username</h3>
+			<p class="mt-2 text-sm text-base-content/65">
+				Votes stay tied to this browser — the username just keeps things accountable. No login,
+				nothing to verify.
+			</p>
+			<input
+				bind:value={ghInput}
+				class="input input-sm mt-4 w-full font-mono"
+				placeholder="octocat"
+				maxlength="39"
+				onkeydown={(e) => e.key === 'Enter' && saveGh()}
+			/>
+			<div class="modal-action">
+				<button class="btn btn-ghost btn-sm" onclick={() => (ghPromptFor = null)}>Cancel</button>
+				<button class="btn btn-primary btn-sm" onclick={saveGh} disabled={!ghInput.trim()}>
+					Save & upvote
+				</button>
+			</div>
+		</div>
+		<button class="modal-backdrop" aria-label="Close" onclick={() => (ghPromptFor = null)}
+		></button>
+	</div>
+{/if}
 
 <style>
 	.dots {

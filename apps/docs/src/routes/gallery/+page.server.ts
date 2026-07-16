@@ -1,6 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import {
 	DEMO_ENTRIES,
+	PER_PAGE,
 	hashIp,
 	insertEntry,
 	isRateLimited,
@@ -9,16 +10,18 @@ import {
 } from '$lib/server/gallery';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ platform }) => {
+export const load: PageServerLoad = async ({ platform, url }) => {
+	const page = Math.max(1, Number.parseInt(url.searchParams.get('page') ?? '1', 10) || 1);
 	const db = platform?.env?.DB;
 	if (!db) {
-		return { entries: DEMO_ENTRIES, live: false };
+		return { entries: DEMO_ENTRIES, total: DEMO_ENTRIES.length, page: 1, perPage: PER_PAGE, live: false };
 	}
 	try {
-		return { entries: await listEntries(db), live: true };
+		const { entries, total } = await listEntries(db, page);
+		return { entries, total, page, perPage: PER_PAGE, live: true };
 	} catch {
 		// Migrations not applied yet — degrade to the demo set.
-		return { entries: DEMO_ENTRIES, live: false };
+		return { entries: DEMO_ENTRIES, total: DEMO_ENTRIES.length, page: 1, perPage: PER_PAGE, live: false };
 	}
 };
 

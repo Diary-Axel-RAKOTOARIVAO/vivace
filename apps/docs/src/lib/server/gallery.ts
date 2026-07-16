@@ -10,7 +10,10 @@ export interface GalleryEntry {
 	trig: string;
 	subject: string;
 	created_at: string;
+	votes: number;
 }
+
+export const PER_PAGE = 12;
 
 export const SUBJECT_IDS = ['stats', 'card', 'hero', 'list', 'nav', 'toast'] as const;
 
@@ -65,14 +68,75 @@ export async function isRateLimited(db: D1Database, ipHash: string): Promise<boo
 	return (count ?? 0) >= RATE_LIMIT;
 }
 
-export async function listEntries(db: D1Database, limit = 60): Promise<GalleryEntry[]> {
-	const { results } = await db
-		.prepare(
-			'SELECT id, name, author, viv, trig, subject, created_at FROM gallery ORDER BY created_at DESC, id DESC LIMIT ?'
-		)
-		.bind(limit)
-		.all<GalleryEntry>();
-	return results;
+export async function listEntries(
+	db: D1Database,
+	page = 1
+): Promise<{ entries: GalleryEntry[]; total: number }> {
+	const offset = (Math.max(1, page) - 1) * PER_PAGE;
+	const [rows, count] = await db.batch([
+		db
+			.prepare(
+				`SELECT g.id, g.name, g.author, g.viv, g.trig, g.subject, g.created_at,
+					COUNT(v.entry_id) AS votes
+				FROM gallery g
+				LEFT JOIN votes v ON v.entry_id = g.id
+				GROUP BY g.id
+				ORDER BY g.created_at DESC, g.id DESC
+				LIMIT ? OFFSET ?`
+			)
+			.bind(PER_PAGE, offset),
+		db.prepare('SELECT COUNT(*) AS n FROM gallery')
+	]);
+	return {
+		entries: (rows!.results ?? []) as unknown as GalleryEntry[],
+		total: ((count!.results?.[0] as { n?: number } | undefined)?.n ?? 0) as number
+	};
+}
+
+/** Persistent per-browser voter id — random uuid-ish token. */
+const VOTER_PATTERN = /^[a-z0-9-]{8,64}$/i;
+
+export function isValidVoter(voter: string): boolean {
+	return VOTER_PATTERN.test(voter);
+}
+
+export function isValidGithubName(name: string): boolean {
+	return /^(?!-)(?!.*--)[a-z\d-]{1,39}$/i.test(name) && !name.endsWith('-');
+}
+
+/** Toggle a vote; returns the new state and count for the entry. */
+export async function toggleVote(
+	db: D1Database,
+	entryId: number,
+	voter: string,
+	gh: string
+): Promise<{ voted: boolean; votes: number } | null> {
+	const exists = await db
+		.prepare('SELECT 1 AS x FROM gallery WHERE id = ?')
+		.bind(entryId)
+		.first();
+	if (!exists) return null;
+
+	const removed = await db
+		.prepare('DELETE FROM votes WHERE entry_id = ? AND voter = ?')
+		.bind(entryId, voter)
+		.run();
+
+	let voted = false;
+	if (removed.meta.changes === 0) {
+		await db
+			.prepare('INSERT INTO votes (entry_id, voter, gh) VALUES (?, ?, ?)')
+			.bind(entryId, voter, gh)
+			.run();
+		voted = true;
+	}
+
+	const votes =
+		(await db
+			.prepare('SELECT COUNT(*) AS n FROM votes WHERE entry_id = ?')
+			.bind(entryId)
+			.first<number>('n')) ?? 0;
+	return { voted, votes };
 }
 
 export async function insertEntry(
@@ -97,7 +161,8 @@ export const DEMO_ENTRIES: GalleryEntry[] = [
 		viv: '@pr-i_child-ascend_ease-out-back @fd @sc-i!',
 		trig: 'load',
 		subject: 'hero',
-		created_at: ''
+		created_at: '',
+		votes: 0
 	},
 	{
 		id: -2,
@@ -106,7 +171,8 @@ export const DEMO_ENTRIES: GalleryEntry[] = [
 		viv: '@sl-y!_child-ascend_ease-out-back @fd',
 		trig: 'load',
 		subject: 'stats',
-		created_at: ''
+		created_at: '',
+		votes: 0
 	},
 	{
 		id: -3,
@@ -115,6 +181,7 @@ export const DEMO_ENTRIES: GalleryEntry[] = [
 		viv: '@dr',
 		trig: 'load',
 		subject: 'toast',
-		created_at: ''
+		created_at: '',
+		votes: 0
 	}
 ];

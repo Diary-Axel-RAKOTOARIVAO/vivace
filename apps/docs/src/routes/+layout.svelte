@@ -29,7 +29,7 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class="min-h-screen bg-base-100 text-base-content">
+<div class="flex min-h-screen flex-col bg-base-100 text-base-content">
 	<header class="border-b border-base-300 sticky top-0 z-50 bg-base-100/90 backdrop-blur">
 		<nav class="mx-auto flex h-14 max-w-5xl items-center justify-between px-5">
 			<a href="/" class="text-lg font-extrabold tracking-tight">
@@ -50,10 +50,12 @@
 		</nav>
 	</header>
 
-	{@render children()}
+	<div class="flex-1">
+		{@render children()}
+	</div>
 
 	{#if !isPlayground}
-		<footer class="border-t border-base-300 mt-16">
+		<footer class="mt-16 border-t border-base-300">
 			<div
 				class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-6 px-5 py-8"
 			>
