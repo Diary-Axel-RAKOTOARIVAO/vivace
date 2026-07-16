@@ -34,6 +34,22 @@
 <div class="mx-auto grid max-w-5xl gap-10 px-5 py-10 md:grid-cols-[13rem_1fr]">
 	<aside>
 		<nav class="md:sticky md:top-20">
+			{#snippet aiCard()}
+				<a
+					href="/docs/vivace.md"
+					class="flex items-start gap-2.5 rounded-box border border-base-300 bg-base-200/40 p-3 transition-colors hover:border-base-content/35"
+				>
+					<iconify-icon icon="lucide:bot" width="16" class="mt-0.5 shrink-0 text-accent"
+					></iconify-icon>
+					<span>
+						<span class="block text-xs font-semibold">AI-friendly docs</span>
+						<span class="mt-0.5 block text-[11px] leading-snug text-base-content/55">
+							Full documentation as one markdown file — paste it into any AI agent. Also at
+							<code class="text-[10px]">/llms.txt</code>.
+						</span>
+					</span>
+				</a>
+			{/snippet}
 			{#each sections as section (section.label)}
 				<div class="mb-5">
 					<div class="mb-1.5 text-xs font-semibold tracking-wider text-base-content/50 uppercase">
@@ -54,6 +70,7 @@
 					</ul>
 				</div>
 			{/each}
+			{@render aiCard()}
 		</nav>
 	</aside>
 	<article class="doc min-w-0">

@@ -49,6 +49,14 @@ Vivace.init()`;
 	</p>
 </Callout>
 
+<Callout kind="tip">
+	<p>
+		Working with an AI agent? Point it at <a href="/docs/vivace.md">/docs/vivace.md</a> (also
+		served as <a href="/llms.txt">/llms.txt</a>) — the complete documentation as a single
+		markdown file, with usage instructions written for LLMs.
+	</p>
+</Callout>
+
 <h2>First animation</h2>
 
 <CodeBlock lang="html" code={first} />
