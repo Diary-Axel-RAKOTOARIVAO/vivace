@@ -4,6 +4,13 @@
 	import Vivace from 'vivace';
 	import { page } from '$app/state';
 	import favicon from '$lib/assets/favicon.svg';
+	import profile from '$lib/assets/profil.png';
+
+	const AUTHOR = {
+		name: 'Axel RAKOTOARIVAO',
+		github: 'https://github.com/Dokja620',
+		linkedin: 'https://www.linkedin.com/in/axel-rakotoarivao'
+	};
 
 	let { children } = $props();
 
@@ -48,11 +55,52 @@
 	{#if !isPlayground}
 		<footer class="border-t border-base-300 mt-16">
 			<div
-				class="mx-auto flex max-w-5xl items-center justify-between px-5 py-6 text-sm text-base-content/60"
+				class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-6 px-5 py-8"
 			>
-				<span>MIT — keyframe DSL inspired by A.css</span>
-				<span class="font-mono text-xs">bun add vivace</span>
+				<div class="flex items-center gap-3.5">
+					<img
+						src={profile}
+						alt="Portrait of {AUTHOR.name}"
+						class="squircle h-12 w-12 object-cover"
+					/>
+					<div>
+						<div class="text-xs text-base-content/50">Created by</div>
+						<div class="flex items-center gap-2">
+							<span class="font-bold tracking-tight">{AUTHOR.name}</span>
+							<a
+								href={AUTHOR.github}
+								target="_blank"
+								rel="noopener noreferrer"
+								aria-label="GitHub profile"
+								class="text-base-content/45 transition-colors hover:text-base-content"
+							>
+								<iconify-icon icon="simple-icons:github" width="15"></iconify-icon>
+							</a>
+							<a
+								href={AUTHOR.linkedin}
+								target="_blank"
+								rel="noopener noreferrer"
+								aria-label="LinkedIn profile"
+								class="text-base-content/45 transition-colors hover:text-base-content"
+							>
+								<iconify-icon icon="simple-icons:linkedin" width="15"></iconify-icon>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="text-right text-sm text-base-content/60">
+					<div>MIT — keyframe DSL inspired by A.css</div>
+					<div class="mt-0.5 font-mono text-xs">bun add vivace</div>
+				</div>
 			</div>
 		</footer>
 	{/if}
 </div>
+
+<style>
+	/* iOS-style superellipse mask */
+	.squircle {
+		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M100 0C20 0 0 20 0 100s20 100 100 100 100-20 100-100S180 0 100 0Z'/%3E%3C/svg%3E")
+			center / 100% 100% no-repeat;
+	}
+</style>
