@@ -3,6 +3,7 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import Vivace, { TRIGGER_OPTIONS } from 'vivace';
+	import GithubUserCheck from '$lib/components/GithubUserCheck.svelte';
 	import Subject from '$lib/components/Subject.svelte';
 	import { SUBJECTS } from '$lib/subjects';
 
@@ -10,10 +11,20 @@
 
 	let formOpen = $state(false);
 
+	// Author must pass the GitHub check before the form can submit.
+	let authorValue = $state('');
+	let authorVerified = $state(false);
+
+	$effect(() => {
+		authorValue = prefill.author ?? '';
+		authorVerified = false;
+	});
+
 	// --- voting: per-browser identity + a GitHub name, no login ---
 	let ghName = $state('');
 	let ghPromptFor = $state<number | null>(null);
 	let ghInput = $state('');
+	let ghVerified = $state(false);
 	let votedIds = $state<Set<number>>(new Set());
 	let voteCounts = $state<Record<number, number>>({});
 
@@ -39,6 +50,7 @@
 		if (!data.live) return;
 		if (!ghName) {
 			ghInput = '';
+			ghVerified = false;
 			ghPromptFor = entryId;
 			return;
 		}
@@ -59,7 +71,7 @@
 
 	function saveGh() {
 		const value = ghInput.trim();
-		if (!value) return;
+		if (!value || !ghVerified) return;
 		ghName = value;
 		localStorage.setItem('vivace-gh', value);
 		const id = ghPromptFor;
@@ -172,21 +184,10 @@
 					value={prefill.name}
 				/>
 			</label>
-			<label class="flex flex-col gap-1 text-sm font-medium">
+			<div class="flex flex-col gap-1 text-sm font-medium">
 				GitHub username
-				<input
-					name="author"
-					required
-					maxlength="39"
-					pattern="[A-Za-z0-9\-]+"
-					class="input input-sm w-full font-mono"
-					placeholder="octocat"
-					value={prefill.author}
-				/>
-				<span class="text-[11px] font-normal text-base-content/50">
-					Shown with your avatar, linked to your profile.
-				</span>
-			</label>
+				<GithubUserCheck bind:value={authorValue} bind:verified={authorVerified} name="author" />
+			</div>
 			<label class="flex flex-col gap-1 text-sm font-medium md:col-span-2">
 				Composition
 				<input
@@ -227,7 +228,13 @@
 				</p>
 			{/if}
 			<div class="flex gap-2 md:col-span-2">
-				<button class="btn btn-primary btn-sm" disabled={!data.live}>Publish</button>
+				<button
+					class="btn btn-primary btn-sm"
+					disabled={!data.live || !authorVerified}
+					title={authorVerified ? '' : 'Verify your GitHub username first'}
+				>
+					Publish
+				</button>
 				<button type="button" class="btn btn-ghost btn-sm" onclick={() => (formOpen = false)}>
 					Cancel
 				</button>
@@ -363,16 +370,12 @@
 				Votes stay tied to this browser — the username just keeps things accountable. No login,
 				nothing to verify.
 			</p>
-			<input
-				bind:value={ghInput}
-				class="input input-sm mt-4 w-full font-mono"
-				placeholder="octocat"
-				maxlength="39"
-				onkeydown={(e) => e.key === 'Enter' && saveGh()}
-			/>
+			<div class="mt-4">
+				<GithubUserCheck bind:value={ghInput} bind:verified={ghVerified} name="gh" />
+			</div>
 			<div class="modal-action">
 				<button class="btn btn-ghost btn-sm" onclick={() => (ghPromptFor = null)}>Cancel</button>
-				<button class="btn btn-primary btn-sm" onclick={saveGh} disabled={!ghInput.trim()}>
+				<button class="btn btn-primary btn-sm" onclick={saveGh} disabled={!ghVerified}>
 					Save & upvote
 				</button>
 			</div>
