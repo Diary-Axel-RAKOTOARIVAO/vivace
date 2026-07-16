@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import Vivace, { TRIGGER_OPTIONS } from 'vivace';
@@ -148,10 +148,6 @@
 				Compositions the community shipped. Click a card to replay it.
 			</p>
 		</div>
-		<button class="btn btn-primary btn-sm" onclick={() => (formOpen = !formOpen)}>
-			<iconify-icon icon="lucide:upload" width="14"></iconify-icon>
-			Share yours
-		</button>
 	</header>
 
 	{#if form?.published}
@@ -163,6 +159,7 @@
 
 	{#if formOpen}
 		<form
+			id="share-form"
 			method="POST"
 			action="?/submit"
 			use:enhance={() =>
@@ -243,6 +240,23 @@
 	{/if}
 
 	<div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+		<!-- share tile: preview-card shaped, dashed -->
+		<button
+			class="flex min-h-64 cursor-pointer flex-col items-center justify-center gap-3 rounded-box border-2 border-dashed border-base-300 text-base-content/45 transition-colors hover:border-base-content/35 hover:text-base-content/70"
+			onclick={async () => {
+				formOpen = true;
+				await tick();
+				document
+					.querySelector('#share-form')
+					?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			}}
+		>
+			<span class="grid h-12 w-12 place-items-center rounded-full border-2 border-dashed border-current">
+				<iconify-icon icon="lucide:plus" width="22"></iconify-icon>
+			</span>
+			<span class="text-sm font-semibold">Start composing</span>
+			<span class="-mt-2 text-xs">and share yours</span>
+		</button>
 		{#each data.entries as entry (entry.id)}
 			<article
 				class="entry group overflow-hidden rounded-box border border-base-300 transition-colors hover:border-base-content/40"
