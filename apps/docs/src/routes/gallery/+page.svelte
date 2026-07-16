@@ -15,9 +15,16 @@
 	let authorValue = $state('');
 	let authorVerified = $state(false);
 
+	// The modal previews exactly what will be published.
+	let vivValue = $state('');
+	let subjectValue = $state('card');
+	let previewNonce = $state(0);
+
 	$effect(() => {
 		authorValue = prefill.author ?? '';
 		authorVerified = false;
+		vivValue = prefill.viv ?? '';
+		subjectValue = prefill.subject ?? 'card';
 	});
 
 	// --- voting: per-browser identity + a GitHub name, no login ---
@@ -170,7 +177,33 @@
 					}}
 				class="modal-box grid max-w-xl gap-3 md:grid-cols-2"
 			>
-				<h3 class="text-base font-bold md:col-span-2">Share a composition</h3>
+				<h3 class="text-base font-bold md:col-span-2">Share this composition</h3>
+
+				<!-- live preview of exactly what gets published -->
+				<div class="relative md:col-span-2">
+					<div
+						class="dots flex h-44 items-center justify-center overflow-hidden rounded-field border border-base-300"
+					>
+						<div
+							class="pointer-events-none flex shrink-0 justify-center"
+							style="width: {fit(subjectValue).width}px; transform: scale({fit(subjectValue)
+								.scale});"
+						>
+							{#key `${vivValue}|${subjectValue}|${previewNonce}`}
+								<Subject template={subjectValue} viv={vivValue} on="load" count={3} />
+							{/key}
+						</div>
+					</div>
+					<button
+						type="button"
+						class="btn btn-square btn-sm absolute right-2 bottom-2 border-base-300 bg-base-100/95"
+						title="Replay"
+						aria-label="Replay preview"
+						onclick={() => (previewNonce += 1)}
+					>
+						<iconify-icon icon="lucide:rotate-ccw" width="14"></iconify-icon>
+					</button>
+				</div>
 			<label class="flex flex-col gap-1 text-sm font-medium">
 				Name
 				<input
@@ -188,14 +221,22 @@
 				<GithubUserCheck bind:value={authorValue} bind:verified={authorVerified} name="author" />
 			</div>
 			<label class="flex flex-col gap-1 text-sm font-medium md:col-span-2">
-				Composition
+				<span class="flex items-baseline justify-between">
+					Composition
+					<a
+						href="/playground?c={encodeURIComponent(vivValue)}"
+						class="text-xs font-normal text-base-content/50 underline underline-offset-2"
+					>
+						edit in playground
+					</a>
+				</span>
 				<input
 					name="viv"
 					required
 					maxlength="200"
 					class="input input-sm w-full font-mono"
 					placeholder="@fd @sl-y_ease-out-back"
-					value={prefill.viv}
+					bind:value={vivValue}
 				/>
 			</label>
 			<label class="flex flex-col gap-1 text-sm font-medium">
@@ -208,11 +249,7 @@
 			</label>
 			<label class="flex flex-col gap-1 text-sm font-medium">
 				Preview subject
-				<select
-					name="subject"
-					class="select select-sm w-full"
-					value={prefill.subject}
-				>
+				<select name="subject" class="select select-sm w-full" bind:value={subjectValue}>
 					{#each SUBJECTS as s (s.id)}
 						<option value={s.id}>{s.name}</option>
 					{/each}
@@ -245,17 +282,18 @@
 	{/if}
 
 	<div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-		<!-- share tile: preview-card shaped, dashed -->
-		<button
-			class="flex min-h-64 cursor-pointer flex-col items-center justify-center gap-3 rounded-box border-2 border-dashed border-base-300 text-base-content/45 transition-colors hover:border-base-content/35 hover:text-base-content/70"
-			onclick={() => (formOpen = true)}
+		<!-- share tile: composing happens in the playground; its Publish
+		     button brings people back here with the form prefilled -->
+		<a
+			href="/playground"
+			class="flex min-h-64 flex-col items-center justify-center gap-3 rounded-box border-2 border-dashed border-base-300 text-base-content/45 transition-colors hover:border-base-content/35 hover:text-base-content/70"
 		>
 			<span class="grid h-12 w-12 place-items-center rounded-full border-2 border-dashed border-current">
 				<iconify-icon icon="lucide:plus" width="22"></iconify-icon>
 			</span>
 			<span class="text-sm font-semibold">Start composing</span>
-			<span class="-mt-2 text-xs">and share yours</span>
-		</button>
+			<span class="-mt-2 text-xs">in the playground, then hit publish</span>
+		</a>
 		{#each data.entries as entry (entry.id)}
 			<article
 				class="entry group overflow-hidden rounded-box border border-base-300 transition-colors hover:border-base-content/40"
