@@ -11,9 +11,28 @@
 
 	let tourOpen = $state(false);
 
+	// Install hint in the code panel, honoring the package-manager choice
+	// remembered by the docs' install tabs.
+	const PM_COMMANDS: Record<string, string> = {
+		bun: 'bun add vivace',
+		npm: 'npm install vivace',
+		pnpm: 'pnpm add vivace',
+		yarn: 'yarn add vivace'
+	};
+	let installCommand = $state(PM_COMMANDS.bun!);
+	let installCopied = $state(false);
+
+	async function copyInstall() {
+		await navigator.clipboard.writeText(installCommand);
+		installCopied = true;
+		setTimeout(() => (installCopied = false), 1500);
+	}
+
 	// Shared URLs (?c=@fd @sl-y_ease-out-back&on=appearing) seed the composer.
 	onMount(() => {
 		if (!localStorage.getItem(TOUR_KEY)) tourOpen = true;
+
+		installCommand = PM_COMMANDS[localStorage.getItem('vivace-pm') ?? 'bun'] ?? PM_COMMANDS.bun!;
 
 		const params = new URLSearchParams(window.location.search);
 		const c = params.get('c');
@@ -119,6 +138,20 @@
 					>{/if}<span class="text-base-content/40">&gt;</span>{'\n'}<span
 					class="text-base-content/30">  …</span
 				>{'\n'}<span class="text-base-content/40">&lt;/div&gt;</span></code>
+			<div class="mt-2.5 flex items-center gap-2 border-t border-base-200 pt-2">
+				<code class="grow bg-transparent p-0 text-[11px] whitespace-nowrap text-base-content/55">
+					<span class="text-base-content/35">$</span>
+					{installCommand}
+				</code>
+				<button
+					class="btn btn-ghost btn-xs h-5 min-h-0 px-1 text-base-content/45"
+					title="Copy install command"
+					aria-label="Copy install command"
+					onclick={copyInstall}
+				>
+					<iconify-icon icon={installCopied ? 'lucide:check' : 'lucide:copy'} width="11"></iconify-icon>
+				</button>
+			</div>
 		</div>
 
 		<!-- subject picker, floating top-right rail -->
