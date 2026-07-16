@@ -42,7 +42,7 @@ const box = useTemplateRef('box')
 </script>
 
 <svelte:head>
-	<title>Vue — Vivace</title>
+	<title>Vue | Vivace</title>
 </svelte:head>
 
 <h1>Vue / Nuxt</h1>

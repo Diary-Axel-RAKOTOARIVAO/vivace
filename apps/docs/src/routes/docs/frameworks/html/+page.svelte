@@ -30,7 +30,7 @@ Vivace.init()`;
 </script>
 
 <svelte:head>
-	<title>Plain HTML — Vivace</title>
+	<title>Plain HTML | Vivace</title>
 </svelte:head>
 
 <h1>Plain HTML</h1>

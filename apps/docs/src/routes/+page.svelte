@@ -74,7 +74,7 @@ Vivace.defineTrigger('longpress', (el, fire) => { /* … */ })`;
 </script>
 
 <svelte:head>
-	<title>Vivace — animate with attributes</title>
+	<title>Vivace | animate with attributes</title>
 	<meta
 		name="description"
 		content="Attribute-driven CSS animations with a tiny trigger engine. 18 composable keys, 5 triggers, zero dependencies, under 7 kB gzipped."

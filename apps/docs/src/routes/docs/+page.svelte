@@ -14,7 +14,7 @@ Vivace.init()`;
 </script>
 
 <svelte:head>
-	<title>Getting started — Vivace</title>
+	<title>Getting started | Vivace</title>
 </svelte:head>
 
 <h1>Getting started</h1>

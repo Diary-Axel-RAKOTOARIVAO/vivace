@@ -120,7 +120,7 @@
 </script>
 
 <svelte:head>
-	<title>Playground — Vivace</title>
+	<title>Playground | Vivace</title>
 </svelte:head>
 
 <div class="flex h-[calc(100dvh-3.5rem)] flex-col md:flex-row">

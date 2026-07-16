@@ -34,7 +34,7 @@
 </script>
 
 <svelte:head>
-	<title>Svelte — Vivace</title>
+	<title>Svelte | Vivace</title>
 </svelte:head>
 
 <h1>Svelte / SvelteKit</h1>

@@ -9,7 +9,7 @@
 </script>
 
 <svelte:head>
-	<title>Preset gallery — Vivace</title>
+	<title>Preset gallery | Vivace</title>
 </svelte:head>
 
 <h1>Preset gallery</h1>

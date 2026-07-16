@@ -55,7 +55,7 @@ toast.remove()            // fill-mode kept it hidden — no flash`;
 </script>
 
 <svelte:head>
-	<title>Extending — Vivace</title>
+	<title>Extending | Vivace</title>
 </svelte:head>
 
 <h1>Extending</h1>

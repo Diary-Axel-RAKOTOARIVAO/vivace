@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>Attributes — Vivace</title>
+	<title>Attributes | Vivace</title>
 </svelte:head>
 
 <h1>Attributes</h1>

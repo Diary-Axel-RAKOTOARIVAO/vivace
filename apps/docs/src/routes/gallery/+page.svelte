@@ -143,7 +143,7 @@
 </script>
 
 <svelte:head>
-	<title>Gallery — Vivace</title>
+	<title>Gallery | Vivace</title>
 	<meta name="description" content="Community-shared Vivace compositions." />
 </svelte:head>
 

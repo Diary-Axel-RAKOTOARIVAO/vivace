@@ -11,7 +11,7 @@ Vivace.destroy()    // remove all listeners and observers`;
 </script>
 
 <svelte:head>
-	<title>Triggers — Vivace</title>
+	<title>Triggers | Vivace</title>
 </svelte:head>
 
 <h1>Triggers</h1>

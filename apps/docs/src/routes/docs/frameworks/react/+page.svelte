@@ -70,7 +70,7 @@ function Card() {
 </script>
 
 <svelte:head>
-	<title>React — Vivace</title>
+	<title>React | Vivace</title>
 </svelte:head>
 
 <h1>React / Next.js</h1>
