@@ -5,6 +5,7 @@
 
 	let html = $state('');
 	let copied = $state(false);
+	let root = $state<HTMLElement>();
 
 	const LABELS: Record<string, string> = {
 		shellscript: 'sh',
@@ -12,13 +13,37 @@
 		javascript: 'js'
 	};
 
+	// Highlight only when the block approaches the viewport, and off the
+	// critical path (idle callback) — grammar compilation is the single
+	// biggest main-thread cost on page load otherwise.
 	$effect(() => {
+		if (!root) return;
 		let alive = true;
-		highlight(code, lang).then((out) => {
-			if (alive) html = out;
-		});
+
+		const run = () => {
+			const idle = window.requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 1));
+			idle(() => {
+				if (!alive) return;
+				highlight(code, lang).then((out) => {
+					if (alive) html = out;
+				});
+			});
+		};
+
+		const io = new IntersectionObserver(
+			(entries) => {
+				if (entries.some((e) => e.isIntersecting)) {
+					io.disconnect();
+					run();
+				}
+			},
+			{ rootMargin: '400px' }
+		);
+		io.observe(root);
+
 		return () => {
 			alive = false;
+			io.disconnect();
 		};
 	});
 
@@ -30,6 +55,7 @@
 </script>
 
 <div
+	bind:this={root}
 	class="codeblock group relative my-4 overflow-hidden rounded-box border border-base-300 bg-base-200/60"
 >
 	<div class="flex items-center justify-between border-b border-base-200 px-4 py-1.5">

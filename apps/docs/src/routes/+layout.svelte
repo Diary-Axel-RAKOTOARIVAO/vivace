@@ -4,7 +4,7 @@
 	import Vivace from 'vivace-css';
 	import { page } from '$app/state';
 	import favicon from '$lib/assets/favicon.svg';
-	import profile from '$lib/assets/profil.png';
+	import profile from '$lib/assets/profil.webp';
 
 	const AUTHOR = {
 		name: 'Axel RAKOTOARIVAO',
@@ -63,7 +63,7 @@
 					<img
 						src={profile}
 						alt="Portrait of {AUTHOR.name}"
-						class="squircle h-12 w-12 object-cover"
+						class="squircle h-12 w-12 object-cover" width="96" height="96" loading="lazy" decoding="async"
 					/>
 					<div>
 						<div class="text-xs text-base-content/50">Created by</div>
