@@ -1,6 +1,6 @@
 {
   "name": "vivace",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Attribute-driven CSS animation library with a tiny trigger engine — compose animations in HTML with data-viv.",
   "license": "MIT",
   "author": "Axel RAKOTOARIVAO <axeldiaryrakotoarivao@gmail.com>",
