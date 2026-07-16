@@ -54,8 +54,8 @@
 		},
 		{
 			id: 'actions',
-			title: 'Play & keep',
-			text: 'Replay the animation, copy the snippet, share a link, or keep it as an experiment. Reopen this tour anytime with the ? button.'
+			title: 'Ship it',
+			text: 'CREATE publishes to the community gallery; the icons copy the snippet, copy a share link, or keep it as an experiment. The play button lives on the canvas, bottom right. Reopen this tour anytime with the ? button.'
 		}
 	];
 

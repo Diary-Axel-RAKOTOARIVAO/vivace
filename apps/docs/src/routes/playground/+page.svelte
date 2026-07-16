@@ -410,14 +410,21 @@
 			{/if}
 		</div>
 
-		<!-- Action bar -->
+		<!-- Action bar: PLAY lives on the canvas; here you ship it -->
 		<div
-			class="grid grid-cols-[1fr_auto_auto_auto_auto_auto] gap-1.5 border-t border-base-300 p-3"
+			class="grid grid-cols-[1fr_auto_auto_auto_auto] gap-1.5 border-t border-base-300 p-3"
 			data-tour="actions"
 		>
-			<button class="btn btn-primary btn-sm tracking-[0.15em]" onclick={play} disabled={!composition.complete}>
-				PLAY
-			</button>
+			<a
+				class="btn btn-primary btn-sm gap-1.5 tracking-[0.15em] {composition.complete
+					? ''
+					: 'btn-disabled'}"
+				title="Publish to the gallery"
+				href={publishUrl}
+			>
+				<iconify-icon icon="lucide:upload" width="14"></iconify-icon>
+				CREATE
+			</a>
 			<button
 				class="btn btn-square btn-sm border-base-300"
 				title="Copy snippet"
@@ -445,16 +452,6 @@
 			>
 				<iconify-icon icon="lucide:bookmark-plus" width="14"></iconify-icon>
 			</button>
-			<a
-				class="btn btn-square btn-sm border-base-300 {composition.complete
-					? ''
-					: 'btn-disabled'}"
-				title="Publish to the gallery"
-				aria-label="Publish to the gallery"
-				href={publishUrl}
-			>
-				<iconify-icon icon="lucide:upload" width="14"></iconify-icon>
-			</a>
 			<button
 				class="btn btn-square btn-ghost btn-sm text-base-content/50"
 				title="How does this work?"
