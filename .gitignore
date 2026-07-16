@@ -8,3 +8,7 @@ build/
 .env.*
 !.env.example
 .claude/
+
+# local reference material, never commit
+animate.css
+vivace-project-brief.md
